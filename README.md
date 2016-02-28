@@ -37,7 +37,8 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
         return new SAMLConfigBeanBuilder()
                 // (Required) assuming IdP's ADFS link is https://idp-adfs-server/adfs/ls ...
                 .setAdfsHostName("idp-adfs-server")
-                // (Required) keystore containing both Sp's public/private key and imported IdP's public certificate.
+                // (Required) keystore containing both Sp's public/private key and imported IdP's 
+                // public certificate.
                 .setKeyStoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
                 // (Required) keystore alias.
                 .setKeystoreAlias("alias")
@@ -52,8 +53,9 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
                 // because IdP should handle the failed login instead of returning back to Sp.
                 // So, you probably don't need to set this.
                 .setFailedLoginDefaultUrl(null)
-                // (Optional) An opportunity to define user authorities or user properties either by cherry picking
-                // from claims from IdP's SAML response or from other data sources
+                // (Optional) An opportunity to define user authorities or user properties either 
+                // by cherry picking the claim values from IdP's SAML response or from other 
+                // data sources
                 .setUserDetailsService(new SAMLUserDetailsService() {
                     @Override
                     public Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
