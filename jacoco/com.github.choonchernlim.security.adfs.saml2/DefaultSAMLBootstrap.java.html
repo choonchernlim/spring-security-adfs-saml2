@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultSAMLBootstrap.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Security ADFS SAML2</a> &gt; <a href="index.source.html" class="el_package">com.github.choonchernlim.security.adfs.saml2</a> &gt; <span class="el_source">DefaultSAMLBootstrap.java</span></div><h1>DefaultSAMLBootstrap.java</h1><pre class="source lang-java linenums">package com.github.choonchernlim.security.adfs.saml2;
+
+import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
+import org.opensaml.Configuration;
+import org.opensaml.xml.security.BasicSecurityConfiguration;
+import org.opensaml.xml.signature.SignatureConstants;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.security.saml.SAMLBootstrap;
+
+/**
+ * By default, Spring Security SAML uses SHA1withRSA for signature algorithm and SHA-1 for digest algorithm.
+ * &lt;p/&gt;
+ * This class allows app to use stronger encryption such as SHA-256.
+ * &lt;p/&gt;
+ * See: http://stackoverflow.com/questions/23681362/how-to-change-the-signature-algorithm-of-saml-request-in-spring-security
+ * See: http://stackoverflow.com/questions/25982093/setting-the-extendedmetadata-signingalgorithm-field/26004147
+ */
+public final class DefaultSAMLBootstrap extends SAMLBootstrap {
+
+    private final String signatureAlgorithmName;
+    private final String signatureAlgorithmURI;
+    private final String digestAlgorithmURI;
+
+    /**
+     * Default signature algorithm is SHA256withRSA and default digest algorithm is SHA-256.
+     */
+    public DefaultSAMLBootstrap() {
+<span class="fc" id="L29">        this(&quot;RSA&quot;, SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256, SignatureConstants.ALGO_ID_DIGEST_SHA256);</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Allows user to specify different algorithm URIs.
+     *
+     * @param signatureAlgorithmName Signature algorithm name
+     * @param signatureAlgorithmURI  Signature algorithm URI
+     * @param digestAlgorithmURI     Digest algorithm URI
+     */
+<span class="fc" id="L39">    public DefaultSAMLBootstrap(final String signatureAlgorithmName,</span>
+                                final String signatureAlgorithmURI,
+                                final String digestAlgorithmURI) {
+        //@formatter:off
+<span class="fc" id="L43">        this.signatureAlgorithmName = expect(signatureAlgorithmName, &quot;Signature algorithm name&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L44">        this.signatureAlgorithmURI = expect(signatureAlgorithmURI, &quot;Signature algorithm URI&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L45">        this.digestAlgorithmURI = expect(digestAlgorithmURI, &quot;Digest algorithm URI&quot;).not().toBeBlank().check();</span>
+        //@formatter:on
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+<span class="fc" id="L51">        super.postProcessBeanFactory(beanFactory);</span>
+<span class="fc" id="L52">        BasicSecurityConfiguration config = (BasicSecurityConfiguration) Configuration.getGlobalSecurityConfiguration();</span>
+<span class="fc" id="L53">        config.registerSignatureAlgorithmURI(signatureAlgorithmName, signatureAlgorithmURI);</span>
+<span class="fc" id="L54">        config.setSignatureReferenceDigestMethod(digestAlgorithmURI);</span>
+<span class="fc" id="L55">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

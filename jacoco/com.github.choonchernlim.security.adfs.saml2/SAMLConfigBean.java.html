@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SAMLConfigBean.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Spring Security ADFS SAML2</a> &gt; <a href="index.source.html" class="el_package">com.github.choonchernlim.security.adfs.saml2</a> &gt; <span class="el_source">SAMLConfigBean.java</span></div><h1>SAMLConfigBean.java</h1><pre class="source lang-java linenums">package com.github.choonchernlim.security.adfs.saml2;
+
+import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
+import com.google.common.base.Optional;
+import org.springframework.core.io.Resource;
+import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
+
+/**
+ * This class contains all properties that can be configured by Sp using the provided builder class.
+ */
+public final class SAMLConfigBean {
+
+    /**
+     * (REQUIRED) ADFS host name without HTTPS protocol.
+     */
+    private final String adfsHostName;
+
+    /**
+     * (REQUIRED) Keystore containing app's public/private key and ADFS' certificate with public key.
+     */
+    private final Resource keyStoreResource;
+
+    /**
+     * (REQUIRED) Keystore alias.
+     */
+    private final String keystoreAlias;
+
+    /**
+     * (REQUIRED) Keystore password.
+     */
+    private final String keystorePassword;
+
+    /**
+     * (REQUIRED) Where to redirect user on successful login if no saved request is found in the session.
+     */
+    private final String successLoginDefaultUrl;
+
+    /**
+     * (REQUIRED) Where to redirect user on successful logout.
+     */
+    private final String successLogoutUrl;
+
+    /**
+     * Where to redirect user on failed login. This value is set to null, which returns
+     * 401 error code on failed login. But, in theory, this will never be used because
+     * IdP will handled the failed login on IdP login page.
+     * &lt;p/&gt;
+     * Default is blank.
+     */
+    private final String failedLoginDefaultUrl;
+
+    /**
+     * For configuring user authorities if needed.
+     * &lt;p/&gt;
+     * Default is null.
+     */
+    private final SAMLUserDetailsService samlUserDetailsService;
+
+<span class="fc" id="L59">    SAMLConfigBean(final String adfsHostName,</span>
+                   final Resource keyStoreResource,
+                   final String keystoreAlias,
+                   final String keystorePassword,
+                   final String successLoginDefaultUrl,
+                   final String successLogoutUrl,
+                   final String failedLoginDefaultUrl,
+                   final SAMLUserDetailsService samlUserDetailsService) {
+
+<span class="fc" id="L68">        this.adfsHostName = expect(adfsHostName, &quot;ADFS host name&quot;).not().toBeBlank().check();</span>
+
+<span class="fc" id="L70">        this.keyStoreResource = (Resource) expect(keyStoreResource, &quot;Key store&quot;).not().toBeNull().check();</span>
+<span class="fc" id="L71">        this.keystoreAlias = expect(keystoreAlias, &quot;Keystore alias&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L72">        this.keystorePassword = expect(keystorePassword, &quot;Keystore password&quot;).not().toBeBlank().check();</span>
+
+<span class="fc" id="L74">        this.successLoginDefaultUrl = expect(successLoginDefaultUrl, &quot;Success login URL&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L75">        this.successLogoutUrl = expect(successLogoutUrl, &quot;Success logout URL&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L76">        this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or(&quot;&quot;);</span>
+
+<span class="fc" id="L78">        this.samlUserDetailsService = samlUserDetailsService;</span>
+<span class="fc" id="L79">    }</span>
+
+    public String getAdfsHostName() {
+<span class="fc" id="L82">        return adfsHostName;</span>
+    }
+
+    public Resource getKeyStoreResource() {
+<span class="fc" id="L86">        return keyStoreResource;</span>
+    }
+
+    public String getKeystoreAlias() {
+<span class="fc" id="L90">        return keystoreAlias;</span>
+    }
+
+    public String getKeystorePassword() {
+<span class="fc" id="L94">        return keystorePassword;</span>
+    }
+
+    public String getSuccessLoginDefaultUrl() {
+<span class="fc" id="L98">        return successLoginDefaultUrl;</span>
+    }
+
+    public String getSuccessLogoutUrl() {
+<span class="fc" id="L102">        return successLogoutUrl;</span>
+    }
+
+    public String getFailedLoginDefaultUrl() {
+<span class="fc" id="L106">        return failedLoginDefaultUrl;</span>
+    }
+
+    public SAMLUserDetailsService getSamlUserDetailsService() {
+<span class="fc" id="L110">        return samlUserDetailsService;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

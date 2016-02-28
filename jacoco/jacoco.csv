@@ -1,0 +1,5 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Spring Security ADFS SAML2,com.github.choonchernlim.security.adfs.saml2,SAMLConfigBeanBuilder,0,63,0,0,0,25,0,10,0,10
+Spring Security ADFS SAML2,com.github.choonchernlim.security.adfs.saml2,SAMLConfigBean,0,98,0,0,0,18,0,9,0,9
+Spring Security ADFS SAML2,com.github.choonchernlim.security.adfs.saml2,DefaultSAMLBootstrap,0,56,0,0,0,12,0,3,0,3
+Spring Security ADFS SAML2,com.github.choonchernlim.security.adfs.saml2,SAMLWebSecurityConfigurerAdapter,574,0,4,0,115,0,47,0,45,0
