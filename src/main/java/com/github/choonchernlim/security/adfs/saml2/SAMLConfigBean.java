@@ -5,6 +5,9 @@ import com.google.common.base.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 
+/**
+ * This class contains all properties that can be configured by Sp using the provided builder class.
+ */
 public final class SAMLConfigBean {
 
     /**
@@ -51,7 +54,7 @@ public final class SAMLConfigBean {
      * <p/>
      * Default is null.
      */
-    private final SAMLUserDetailsService userDetailsService;
+    private final SAMLUserDetailsService samlUserDetailsService;
 
     SAMLConfigBean(final String adfsHostName,
                    final Resource keyStoreResource,
@@ -60,7 +63,7 @@ public final class SAMLConfigBean {
                    final String successLoginDefaultUrl,
                    final String successLogoutUrl,
                    final String failedLoginDefaultUrl,
-                   final SAMLUserDetailsService userDetailsService) {
+                   final SAMLUserDetailsService samlUserDetailsService) {
 
         this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
 
@@ -72,7 +75,7 @@ public final class SAMLConfigBean {
         this.successLogoutUrl = expect(successLogoutUrl, "Success logout URL").not().toBeBlank().check();
         this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or("");
 
-        this.userDetailsService = userDetailsService;
+        this.samlUserDetailsService = samlUserDetailsService;
     }
 
     public String getAdfsHostName() {
@@ -103,7 +106,7 @@ public final class SAMLConfigBean {
         return failedLoginDefaultUrl;
     }
 
-    public SAMLUserDetailsService getUserDetailsService() {
-        return userDetailsService;
+    public SAMLUserDetailsService getSamlUserDetailsService() {
+        return samlUserDetailsService;
     }
 }

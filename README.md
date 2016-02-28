@@ -66,7 +66,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
                 // (Optional) An opportunity to define user authorities or user properties either 
                 // by cherry picking the claim values from IdP's SAML response or from other 
                 // data sources
-                .setUserDetailsService(new SAMLUserDetailsService() {
+                .setSamlUserDetailsService(new SAMLUserDetailsService() {
                     @Override
                     public Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
                         return ...;

@@ -74,6 +74,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.util.Collections;
 import java.util.Timer;
 
+/**
+ * Spring Security configuration to authenticate against ADFS using SAML protocol.
+ * This class should be extended by Sp's Java-based Spring configuration for web security.
+ */
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -86,9 +90,21 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         return new DefaultSAMLBootstrap();
     }
 
+    /**
+     * Sp's SAMLConfigBean to further customize this security configuration.
+     *
+     * @return SAML config bean
+     */
     @Bean
     protected abstract SAMLConfigBean samlConfigBean();
 
+    /**
+     * Fluent API that pre-configures HttpSecurity with SAML specific configuration.
+     *
+     * @param http HttpSecurity instance
+     * @return Same HttpSecurity instance
+     * @throws Exception
+     */
     // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
     // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
     protected final HttpSecurity samlizedConfig(final HttpSecurity http) throws Exception {
@@ -104,6 +120,13 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         return http;
     }
 
+    /**
+     * Fluent API that pre-configures WebSecurity with SAML specific configuration.
+     *
+     * @param web WebSecurity instance
+     * @return Same WebSecurity instance
+     * @throws Exception
+     */
     protected final WebSecurity samlizedConfig(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers(samlConfigBean().getSuccessLogoutUrl());
         return web;
@@ -296,8 +319,8 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
-        if (samlConfigBean().getUserDetailsService() != null) {
-            samlAuthenticationProvider.setUserDetails(samlConfigBean().getUserDetailsService());
+        if (samlConfigBean().getSamlUserDetailsService() != null) {
+            samlAuthenticationProvider.setUserDetails(samlConfigBean().getSamlUserDetailsService());
         }
         return samlAuthenticationProvider;
     }
