@@ -24,6 +24,16 @@ Tested against:-
 </dependency>
 ```
 
+## Prerequisites
+
+* Sp must use HTTPS protocol.
+* Java’s default keysize is limited to 128-bit key due to US export laws and a few countries’ import laws. So, Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files must be installed to allow larger key size, such as 256-bit key.
+* Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
+    * Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
+    * IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack.
+    * To import IdP's public certificate into keystore:-
+        * `keytool -importcert -file idp-adfs-server.cer -keystore keystore.jks -alias "idp-adfs-server"`
+
 ## Usage 
 
 ```java
@@ -92,16 +102,6 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
     }
 }
 ```
-
-## Prerequisites
-
-* Sp must use HTTPS protocol.
-* Java’s default keysize is limited to 128-bit key due to US export laws and a few countries’ import laws. So, Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files must be installed to allow larger key size, such as 256-bit key.
-* Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
-    * Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
-    * IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack.
-    * To import IdP's public certificate into keystore:-
-        * `keytool -importcert -file idp-adfs-server.cer -keystore keystore.jks -alias "idp-adfs-server"`
 
 ## Important SAML Endpoints
 
