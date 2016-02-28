@@ -37,6 +37,7 @@ Tested against:-
 ## Usage 
 
 ```java
+// Create a Java-based Spring configuration that extends SAMLWebSecurityConfigurerAdapter.
 @Configuration
 @EnableWebSecurity
 class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
