@@ -1,4 +1,4 @@
-# spring-security-adfs-saml2
+# spring-security-adfs-saml2 [![Build Status](https://travis-ci.org/choonchernlim/spring-security-adfs-saml2.svg?branch=master)](https://travis-ci.org/choonchernlim/spring-security-adfs-saml2)
 
 Spring Security module for service provider (Sp) to authenticate against identity provider's (IdP) ADFS using SAML protocol.
 
@@ -28,11 +28,11 @@ Tested against:-
 
 There are several SAML processing endpoints, but these are the ones you probably care:-
 
-|SAML Endpoint             |Description                                                                                                                             |
-|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-|`GET /saml/login`         |Initiates login process between Sp and IdP. Upon successful login, user will be redirected to `SAMLConfigBean.successLoginDefaultUrl`.  |
-|`GET /saml/logout`        |Initiates logout process between Sp and IdP. Upon successful logout, user will be redirected to `SAMLConfigBean.successLogoutUrl`.      |
-|`GET /saml/metadata`      |Returns Sp metadata. IdP may need this link to register Sp on ADFS.                                                                     |
+|Endpoint              |Description                                                                                                                             |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+|`/saml/login`         |Initiates login process between Sp and IdP. Upon successful login, user will be redirected to `SAMLConfigBean.successLoginDefaultUrl`.  |
+|`/saml/logout`        |Initiates logout process between Sp and IdP. Upon successful logout, user will be redirected to `SAMLConfigBean.successLogoutUrl`.      |
+|`/saml/metadata`      |Returns Sp metadata. IdP may need this link to register Sp on ADFS.                                                                     |
 
 ## Relevant Links
 
