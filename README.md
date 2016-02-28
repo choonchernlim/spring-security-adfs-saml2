@@ -24,6 +24,73 @@ Tested against:-
 </dependency>
 ```
 
+## Usage 
+
+```java
+@Configuration
+@EnableWebSecurity
+class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
+
+    // All the parameters you can used to configure this module
+    @Override
+    protected SAMLConfigBean samlConfigBean() {
+        return new SAMLConfigBeanBuilder()
+                // (Required) assuming IdP's ADFS link is https://idp-adfs-server/adfs/ls ...
+                .setAdfsHostName("idp-adfs-server")
+                // (Required) keystore containing both Sp's public/private key and imported IdP's public certificate.
+                .setKeyStoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
+                // (Required) keystore alias.
+                .setKeystoreAlias("alias")
+                // (Required) keystore password.
+                .setKeystorePassword("secret")
+                // (Required) where to redirect user if there's no saved request in session 
+                // (ie: user gets logged in by clicking on `/saml/login` link).
+                .setSuccessLoginDefaultUrl("/")
+                // (Required) where to redirect user when logging out.
+                .setSuccessLogoutUrl("/goodbye")
+                // (Optional) Where to redirect user on failed login. This is probably not needed
+                // because IdP should handle the failed login instead of returning back to Sp.
+                // So, you probably don't need to set this.
+                .setFailedLoginDefaultUrl(null)
+                // (Optional) An opportunity to define user authorities or user properties either by cherry picking
+                // from claims from IdP's SAML response or from other data sources
+                .setUserDetailsService(new SAMLUserDetailsService() {
+                    @Override
+                    public Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
+                        return ...;
+                    }
+                })
+                .createSAMLConfigBean();
+    }
+
+    // This configuration is not needed if your signature algorithm is SHA256withRSA and 
+    // digest algorithm is SHA-256. However, if you are using different algorithm(s), then
+    // add this bean with the correct algorithms.
+    @Bean
+    public static SAMLBootstrap samlBootstrap() {
+        return new DefaultSAMLBootstrap("RSA",
+                                        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA512,
+                                        SignatureConstants.ALGO_ID_DIGEST_SHA512);
+    }
+
+    // call `samlizedConfig(http)` first to redecorate `http` with SAML configuration
+    // before configuring app specific HTTP security
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
+        samlizedConfig(http)
+                .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated();
+    }
+
+    // call `samlizedConfig(web)` first to redecorate `web` with SAML configuration 
+    // before configuring app specific web security
+    @Override
+    public void configure(final WebSecurity web) throws Exception {
+        samlizedConfig(web).ignoring().antMatchers("/resources/**");
+    }
+}
+```
+
 ## Prerequisites
 
 * Sp must use HTTPS protocol.
