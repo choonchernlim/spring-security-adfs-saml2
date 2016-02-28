@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLAuthenticationProvider;
+import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.SAMLDiscovery;
 import org.springframework.security.saml.SAMLEntryPoint;
 import org.springframework.security.saml.SAMLLogoutFilter;
@@ -73,38 +74,45 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.util.Collections;
 import java.util.Timer;
 
-public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-    private final SAMLConfigBean samlConfigBean;
     @Autowired
     private SAMLAuthenticationProvider samlAuthenticationProvider;
 
-    protected SAMLCoreWebSecurityConfigurerAdapter(SAMLConfigBean samlConfigBean) {
-        this.samlConfigBean = samlConfigBean;
+    // Initialization of OpenSAML library, must be static to prevent "ObjectPostProcessor is a required bean" exception
+    // By default, Spring Security SAML uses SHA-1. So, use `DefaultSAMLBootstrap` to use SHA-256.
+    @Bean
+    public static SAMLBootstrap samlBootstrap() {
+        return new DefaultSAMLBootstrap();
+    }
+
+    @Bean
+    protected abstract SAMLConfigBean samlConfigBean();
+
+    // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
+    // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
+    protected final HttpSecurity samlizedConfig(final HttpSecurity http) throws Exception {
+        http.httpBasic().authenticationEntryPoint(samlEntryPoint())
+                .and()
+                .csrf().ignoringAntMatchers("/saml/**")
+                .and()
+                .authorizeRequests().antMatchers("/saml/**").permitAll()
+                .and()
+                .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
+                .addFilterAfter(filterChainProxy(), BasicAuthenticationFilter.class);
+
+        return http;
+    }
+
+    protected final WebSecurity samlizedConfig(final WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(samlConfigBean().getSuccessLogoutUrl());
+        return web;
     }
 
     // IDP metadata URL
     private String getMetdataUrl() {
         return String.format("https://%s/federationmetadata/2007-06/federationmetadata.xml",
-                             samlConfigBean.getAdfsHostName());
-    }
-
-    // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
-    // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/saml/**")
-                .httpBasic()
-                .authenticationEntryPoint(samlEntryPoint())
-                .and()
-                .csrf().disable()
-                .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
-                .addFilterAfter(filterChainProxy(), BasicAuthenticationFilter.class);
-    }
-
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(samlConfigBean.getSuccessLogoutUrl());
+                             samlConfigBean().getAdfsHostName());
     }
 
     // Entry point to initialize authentication
@@ -174,7 +182,7 @@ public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityCo
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
         SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-        successRedirectHandler.setDefaultTargetUrl(samlConfigBean.getSuccessLoginDefaultUrl());
+        successRedirectHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLoginDefaultUrl());
         return successRedirectHandler;
     }
 
@@ -185,8 +193,8 @@ public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityCo
 
         // The precondition on `setDefaultFailureUrl(..)` will cause an exception if the value is null.
         // So, only set this value if it is not null
-        if (!samlConfigBean.getFailedLoginDefaultUrl().isEmpty()) {
-            failureHandler.setDefaultFailureUrl(samlConfigBean.getFailedLoginDefaultUrl());
+        if (!samlConfigBean().getFailedLoginDefaultUrl().isEmpty()) {
+            failureHandler.setDefaultFailureUrl(samlConfigBean().getFailedLoginDefaultUrl());
         }
 
         return failureHandler;
@@ -196,7 +204,7 @@ public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityCo
     @Bean
     public SimpleUrlLogoutSuccessHandler successLogoutHandler() {
         SimpleUrlLogoutSuccessHandler successLogoutHandler = new SimpleUrlLogoutSuccessHandler();
-        successLogoutHandler.setDefaultTargetUrl(samlConfigBean.getSuccessLogoutUrl());
+        successLogoutHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLogoutUrl());
         return successLogoutHandler;
     }
 
@@ -222,11 +230,11 @@ public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityCo
     // Central storage of cryptographic keys
     @Bean
     public KeyManager keyManager() {
-        return new JKSKeyManager(samlConfigBean.getKeyStoreResource(),
-                                 samlConfigBean.getKeystorePassword(),
-                                 ImmutableMap.of(samlConfigBean.getKeystoreAlias(),
-                                                 samlConfigBean.getKeystorePassword()),
-                                 samlConfigBean.getKeystoreAlias());
+        return new JKSKeyManager(samlConfigBean().getKeyStoreResource(),
+                                 samlConfigBean().getKeystorePassword(),
+                                 ImmutableMap.of(samlConfigBean().getKeystoreAlias(),
+                                                 samlConfigBean().getKeystorePassword()),
+                                 samlConfigBean().getKeystoreAlias());
     }
 
     // IDP Discovery service
@@ -288,8 +296,8 @@ public abstract class SAMLCoreWebSecurityConfigurerAdapter extends WebSecurityCo
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
-        if (samlConfigBean.getUserDetailsService() != null) {
-            samlAuthenticationProvider.setUserDetails(samlConfigBean.getUserDetailsService());
+        if (samlConfigBean().getUserDetailsService() != null) {
+            samlAuthenticationProvider.setUserDetails(samlConfigBean().getUserDetailsService());
         }
         return samlAuthenticationProvider;
     }
