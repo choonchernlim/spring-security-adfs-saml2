@@ -2,6 +2,13 @@
 
 Spring Security module for service provider (Sp) to authenticate against identity provider's (IdP) ADFS using SAML protocol.
 
+How this module is configured:-
+
+* `HTTP-Redirect` binding for sending SAML messages to IdP.
+* SSO is disabled by forcing IdP login page to appear so that users don't automatically get logged in through Windows Integrated Auth (WIA). 
+* Default signature algorithm is SHA256withRSA.
+* Default digest algorithm is SHA-256.
+
 Tested against:-
 
 * ADFS 2.0 - Windows Server 2008 R2
@@ -17,20 +24,15 @@ Tested against:-
     * To import IdP's public certificate into keystore:-
         * `keytool -importcert -file idp-adfs-server.cer -keystore keystore.jks -alias "idp-adfs-server"`
 
-## How this Module is Configured
-
-* `HTTP-Redirect` binding for sending SAML messages to IdP.
-* SSO is disabled by forcing IdP login page to appear so that users don't automatically get logged in through Windows Integrated Auth (WIA). 
-* Default signature algorithm is SHA256withRSA.
-* Default digest algorithm is SHA-256.
-
 ## Important SAML Endpoints
 
 There are several SAML processing endpoints, but these are the ones you probably care:-
 
-* `GET /saml/login` - Initiates login process between Sp and IdP. Upon successful login, user will be redirected to `SAMLConfigBean.successLoginDefaultUrl`.
-* `GET /saml/logout` - Initiates logout process between Sp and IdP. Upon successful logout, user will be redirected to `SAMLConfigBean.successLogoutUrl`.
-* `GET /saml/metadata` - Returns Sp metadata. IdP may need this link to register Sp on ADFS.
+|SAML Endpoint             |Description                                                                                                                             |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+|`GET /saml/login`         |Initiates login process between Sp and IdP. Upon successful login, user will be redirected to `SAMLConfigBean.successLoginDefaultUrl`.  |
+|`GET /saml/logout`        |Initiates logout process between Sp and IdP. Upon successful logout, user will be redirected to `SAMLConfigBean.successLogoutUrl`.      |
+|`GET /saml/metadata`      |Returns Sp metadata. IdP may need this link to register Sp on ADFS.                                                                     |
 
 ## Relevant Links
 
