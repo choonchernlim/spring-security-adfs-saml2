@@ -14,6 +14,16 @@ Tested against:-
 * ADFS 2.0 - Windows Server 2008 R2
 * ADFS 2.1 - Windows Server 2012
 
+## Maven Dependency
+
+```xml
+<dependency>
+  <groupId>com.github.choonchernlim</groupId>
+  <artifactId>spring-security-adfs-saml2</artifactId>
+  <version>X.X.X</version>
+</dependency>
+```
+
 ## Prerequisites
 
 * Sp must use HTTPS protocol.
