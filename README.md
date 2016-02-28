@@ -1,6 +1,6 @@
 # spring-security-adfs-saml2 [![Build Status](https://travis-ci.org/choonchernlim/spring-security-adfs-saml2.svg?branch=master)](https://travis-ci.org/choonchernlim/spring-security-adfs-saml2)
 
-Spring Security module for service provider (Sp) to authenticate against identity provider's (IdP) ADFS using SAML protocol.
+Spring Security module for service provider (Sp) to authenticate against identity provider's (IdP) ADFS using SAML2 protocol.
 
 How this module is configured:-
 
