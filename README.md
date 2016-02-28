@@ -20,7 +20,7 @@ Tested against:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>X.X.X</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
@@ -114,6 +114,9 @@ There are several SAML processing endpoints, but these are the ones you probably
 |`/saml/metadata`      |Returns Sp metadata. IdP may need this link to register Sp on ADFS.                                                                     |
 
 ## Relevant Links
+
+* [Travis CI Reports](https://travis-ci.org/choonchernlim/spring-security-adfs-saml2)
+* [Maven Site](https://choonchernlim.github.io/spring-security-adfs-saml2/project-info.html)
 
 Learn about my pains and lessons learned while building this module.
 
