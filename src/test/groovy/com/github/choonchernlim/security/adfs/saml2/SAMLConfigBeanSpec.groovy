@@ -2,6 +2,7 @@ package com.github.choonchernlim.security.adfs.saml2
 
 import com.github.choonchernlim.betterPreconditions.exception.ObjectNullPreconditionException
 import com.github.choonchernlim.betterPreconditions.exception.StringBlankPreconditionException
+import org.opensaml.saml2.core.AuthnContext
 import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -29,7 +30,8 @@ class SAMLConfigBeanSpec extends Specification {
             setSuccessLoginDefaultUrl('successLoginDefaultUrl').
             setSuccessLogoutUrl('successLogoutUrl').
             setFailedLoginDefaultUrl('failedLoginDefaultUrl').
-            setSamlUserDetailsService(samlUserDetailsService)
+            setSamlUserDetailsService(samlUserDetailsService).
+            setAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
 
     def "required and optional fields"() {
         when:
@@ -44,6 +46,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == 'failedLoginDefaultUrl'
         bean.samlUserDetailsService == samlUserDetailsService
+        bean.authnContexts == [CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set
     }
 
     def "only required fields"() {
@@ -51,6 +54,7 @@ class SAMLConfigBeanSpec extends Specification {
         def bean = allFieldsBeanBuilder.
                 setFailedLoginDefaultUrl(null).
                 setSamlUserDetailsService(null).
+                setAuthnContexts(null).
                 createSAMLConfigBean()
 
         then:
@@ -62,6 +66,17 @@ class SAMLConfigBeanSpec extends Specification {
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == ''
         bean.samlUserDetailsService == null
+        bean.authnContexts == [AuthnContext.PASSWORD_AUTHN_CTX] as Set
+    }
+
+    def "authnContexts - empty set is fine"() {
+        when:
+        def bean = allFieldsBeanBuilder.
+                setAuthnContexts([] as Set).
+                createSAMLConfigBean()
+
+        then:
+        bean.authnContexts == [] as Set
     }
 
     @Unroll

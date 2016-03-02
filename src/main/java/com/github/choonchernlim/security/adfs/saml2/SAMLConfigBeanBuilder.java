@@ -3,6 +3,8 @@ package com.github.choonchernlim.security.adfs.saml2;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 
+import java.util.Set;
+
 /**
  * Builder class for constructing SAMLConfigBean.
  */
@@ -15,6 +17,7 @@ public final class SAMLConfigBeanBuilder {
     private String successLogoutUrl;
     private String failedLoginDefaultUrl;
     private SAMLUserDetailsService samlUserDetailsService;
+    private Set<String> authnContexts;
 
     public SAMLConfigBeanBuilder setAdfsHostName(final String adfsHostName) {
         this.adfsHostName = adfsHostName;
@@ -56,6 +59,11 @@ public final class SAMLConfigBeanBuilder {
         return this;
     }
 
+    public SAMLConfigBeanBuilder setAuthnContexts(final Set<String> authnContexts) {
+        this.authnContexts = authnContexts;
+        return this;
+    }
+
     public SAMLConfigBean createSAMLConfigBean() {
         return new SAMLConfigBean(adfsHostName,
                                   keyStoreResource,
@@ -64,6 +72,7 @@ public final class SAMLConfigBeanBuilder {
                                   successLoginDefaultUrl,
                                   successLogoutUrl,
                                   failedLoginDefaultUrl,
-                                  samlUserDetailsService);
+                                  samlUserDetailsService,
+                                  authnContexts);
     }
 }

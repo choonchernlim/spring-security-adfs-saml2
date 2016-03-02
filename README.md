@@ -5,7 +5,7 @@ Spring Security module for service provider (Sp) to authenticate against identit
 How this module is configured:-
 
 * `HTTP-Redirect` binding for sending SAML messages to IdP.
-* SSO is disabled by forcing IdP login page to appear so that users don't automatically get logged in through Windows Integrated Auth (WIA). 
+* Default authentication method is user/password using IdP's form login page. 
 * Default signature algorithm is SHA256withRSA.
 * Default digest algorithm is SHA-256.
 
@@ -20,7 +20,7 @@ Tested against:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -63,16 +63,21 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
                 // (Optional) Where to redirect user on failed login. This is probably not needed
                 // because IdP should handle the failed login instead of returning back to Sp.
                 // So, you probably don't need to set this.
-                .setFailedLoginDefaultUrl(null)
+                // Default is empty string.
+                .setFailedLoginDefaultUrl("/error")
                 // (Optional) An opportunity to define user authorities or user properties either 
                 // by cherry picking the claim values from IdP's SAML response or from other 
-                // data sources
+                // data sources.
+                // Default is null.
                 .setSamlUserDetailsService(new SAMLUserDetailsService() {
                     @Override
                     public Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
                         return ...;
                     }
                 })
+                // (Optional) Authentication method (WIA, user/password, etc)
+                // Default is user/password authentication.
+                .setAuthnContexts(ImmutableSet.of(CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX))
                 .createSAMLConfigBean();
     }
 

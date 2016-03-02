@@ -8,7 +8,6 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.core.AuthnContext;
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
@@ -71,7 +70,6 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.util.Collections;
 import java.util.Timer;
 
 /**
@@ -156,14 +154,11 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         // See: http://stackoverflow.com/questions/30528636/saml-login-errors
         webSSOProfileOptions.setForceAuthN(true);
 
-        // Disable SSO by forcing login page to appear, even though SSO is enabled on ADFS.
-        // By default, if SSO is enable on ADFS, certain browsers will automatically log user in through
-        // Windows Integrated Auth (WIA) and user agent detection, and there's no proper way to log out
-        // since it will automatically log user back in.
-        //
-        // This ensures the app can properly log out when clicking on the log out button and
-        // ensures the unified IDP login page is served regardless of the types of browser used.
-        webSSOProfileOptions.setAuthnContexts(Collections.singletonList(AuthnContext.PASSWORD_AUTHN_CTX));
+        // Determine what authentication method to use (WIA, user/password, etc).
+        // If not set, it will use authentication method order defined by IdP
+        if (!samlConfigBean().getAuthnContexts().isEmpty()) {
+            webSSOProfileOptions.setAuthnContexts(samlConfigBean().getAuthnContexts());
+        }
 
         SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
         samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);

@@ -2,8 +2,12 @@ package com.github.choonchernlim.security.adfs.saml2;
 
 import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import org.opensaml.saml2.core.AuthnContext;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
+
+import java.util.Set;
 
 /**
  * This class contains all properties that can be configured by Sp using the provided builder class.
@@ -56,6 +60,17 @@ public final class SAMLConfigBean {
      */
     private final SAMLUserDetailsService samlUserDetailsService;
 
+    /**
+     * Determine what authentication methods to use.
+     * <p/>
+     * To use the order of authentication methods defined by IdP, set as empty set.
+     * <p/>
+     * To enable Windows Integrated Auth (WIA) cross browsers and OSes, use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.
+     * <p/>
+     * Default is user/password authentication where IdP login page is displayed.
+     */
+    private final Set<String> authnContexts;
+
     SAMLConfigBean(final String adfsHostName,
                    final Resource keyStoreResource,
                    final String keystoreAlias,
@@ -63,7 +78,8 @@ public final class SAMLConfigBean {
                    final String successLoginDefaultUrl,
                    final String successLogoutUrl,
                    final String failedLoginDefaultUrl,
-                   final SAMLUserDetailsService samlUserDetailsService) {
+                   final SAMLUserDetailsService samlUserDetailsService,
+                   final Set<String> authnContexts) {
 
         this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
 
@@ -73,9 +89,12 @@ public final class SAMLConfigBean {
 
         this.successLoginDefaultUrl = expect(successLoginDefaultUrl, "Success login URL").not().toBeBlank().check();
         this.successLogoutUrl = expect(successLogoutUrl, "Success logout URL").not().toBeBlank().check();
+
         this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or("");
 
         this.samlUserDetailsService = samlUserDetailsService;
+
+        this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
     }
 
     public String getAdfsHostName() {
@@ -108,5 +127,9 @@ public final class SAMLConfigBean {
 
     public SAMLUserDetailsService getSamlUserDetailsService() {
         return samlUserDetailsService;
+    }
+
+    public Set<String> getAuthnContexts() {
+        return authnContexts;
     }
 }
