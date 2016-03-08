@@ -256,7 +256,7 @@
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>     <em class="jxr_comment">// Central storage of cryptographic keys</em>
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>     @Bean
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>     <strong class="jxr_keyword">public</strong> KeyManager keyManager() {
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> JKSKeyManager(samlConfigBean().getKeyStoreResource(),
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> JKSKeyManager(samlConfigBean().getKeystoreResource(),
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>                                  samlConfigBean().getKeystorePassword(),
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>                                  ImmutableMap.of(samlConfigBean().getKeystoreAlias(),
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>                                                  samlConfigBean().getKeystorePrivateKeyPassword()),

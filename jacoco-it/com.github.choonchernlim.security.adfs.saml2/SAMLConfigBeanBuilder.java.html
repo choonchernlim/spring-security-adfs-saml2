@@ -10,7 +10,7 @@ import java.util.Set;
  */
 <span class="fc" id="L11">public final class SAMLConfigBeanBuilder {</span>
     private String adfsHostName;
-    private Resource keyStoreResource;
+    private Resource keystoreResource;
     private String keystoreAlias;
     private String keystorePassword;
     private String keystorePrivateKeyPassword;
@@ -25,8 +25,8 @@ import java.util.Set;
 <span class="fc" id="L25">        return this;</span>
     }
 
-    public SAMLConfigBeanBuilder setKeyStoreResource(final Resource keyStoreResource) {
-<span class="fc" id="L29">        this.keyStoreResource = keyStoreResource;</span>
+    public SAMLConfigBeanBuilder setKeystoreResource(final Resource keystoreResource) {
+<span class="fc" id="L29">        this.keystoreResource = keystoreResource;</span>
 <span class="fc" id="L30">        return this;</span>
     }
 
@@ -72,7 +72,7 @@ import java.util.Set;
 
     public SAMLConfigBean createSAMLConfigBean() {
 <span class="fc" id="L74">        return new SAMLConfigBean(adfsHostName,</span>
-<span class="fc" id="L75">                                  keyStoreResource,</span>
+<span class="fc" id="L75">                                  keystoreResource,</span>
 <span class="fc" id="L76">                                  keystoreAlias,</span>
 <span class="fc" id="L77">                                  keystorePassword,</span>
 <span class="fc" id="L78">                                  keystorePrivateKeyPassword,</span>

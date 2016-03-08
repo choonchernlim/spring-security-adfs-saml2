@@ -22,7 +22,7 @@ public final class SAMLConfigBean {
     /**
      * (REQUIRED) Keystore containing app's public/private key and ADFS' certificate with public key.
      */
-    private final Resource keyStoreResource;
+    private final Resource keystoreResource;
 
     /**
      * (REQUIRED) Keystore alias.
@@ -77,7 +77,7 @@ public final class SAMLConfigBean {
     private final Set&lt;String&gt; authnContexts;
 
 <span class="fc" id="L79">    SAMLConfigBean(final String adfsHostName,</span>
-                   final Resource keyStoreResource,
+                   final Resource keystoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
                    final String keystorePrivateKeyPassword,
@@ -90,7 +90,7 @@ public final class SAMLConfigBean {
         //@formatter:off
 <span class="fc" id="L91">        this.adfsHostName = expect(adfsHostName, &quot;ADFS host name&quot;).not().toBeBlank().check();</span>
 
-<span class="fc" id="L93">        this.keyStoreResource = (Resource) expect(keyStoreResource, &quot;Key store&quot;).not().toBeNull().check();</span>
+<span class="fc" id="L93">        this.keystoreResource = (Resource) expect(keystoreResource, &quot;Key store&quot;).not().toBeNull().check();</span>
 <span class="fc" id="L94">        this.keystoreAlias = expect(keystoreAlias, &quot;Keystore alias&quot;).not().toBeBlank().check();</span>
 <span class="fc" id="L95">        this.keystorePassword = expect(keystorePassword, &quot;Keystore password&quot;).not().toBeBlank().check();</span>
 <span class="fc" id="L96">        this.keystorePrivateKeyPassword = expect(keystorePrivateKeyPassword, &quot;Keystore private key password&quot;).not().toBeBlank().check();</span>
@@ -110,8 +110,8 @@ public final class SAMLConfigBean {
 <span class="fc" id="L110">        return adfsHostName;</span>
     }
 
-    public Resource getKeyStoreResource() {
-<span class="fc" id="L114">        return keyStoreResource;</span>
+    public Resource getKeystoreResource() {
+<span class="fc" id="L114">        return keystoreResource;</span>
     }
 
     public String getKeystoreAlias() {
