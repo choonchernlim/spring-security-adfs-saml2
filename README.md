@@ -47,7 +47,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
     protected SAMLConfigBean samlConfigBean() {
         return new SAMLConfigBeanBuilder()
                 .setAdfsHostName("idp-adfs-server")
-                .setKeyStoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
+                .setKeystoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
                 .setKeystorePassword("storepass")
                 .setKeystoreAlias("alias")
                 .setKeystorePrivateKeyPassword("keypass")
@@ -91,7 +91,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 |Property                   |Required? |Description                                                                                               |
 |---------------------------|----------|----------------------------------------------------------------------------------------------------------|
 |adfsHostName               |Yes       |ADFS host name without HTTPS protocol.<p>If ADFS link is `https://idp-adfs-server/adfs/ls`, the value should be `idp-adfs-server`.|
-|keyStoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
+|keystoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
 |keystorePassword           |Yes       |Password to access app's keystore.                                                                        |
 |keystoreAlias              |Yes       |Alias of app's public/private key pair.                                                                   |
 |keystorePrivateKeyPassword |Yes       |Password to access app's private key.                                                                     |
@@ -99,7 +99,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 |successLogoutUrl           |Yes       |Where to redirect user on successful logout.                                                              |
 |failedLoginDefaultUrl      |No        |Where to redirect user on failed login. This value is set to null, which returns 401 error code on failed login. But, in theory, this will never be used because IdP will handled the failed login on IdP login page.<br/><br/>Default is `''`, which return 401 error code.|
 |samlUserDetailsService     |No        |For configuring user authorities (ex: `ROLE_*`) if needed.<br/><br/>Default is `null`.                                       |
-|authnContexts              |No        |Determine what authentication methods to use. To use the order of authentication methods defined by IdP, set as empty set. To enable Windows Integrated Auth (WIA) cross browsers and OSes, use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.<br/><br/>Default is `AuthnContext.PASSWORD_AUTHN_CTX` where IdP login page is displayed to obtain user/password.|
+|authnContexts              |No        |Determine what authentication methods to use. To use the order of authentication methods defined by IdP, set as empty set. To enable Windows Integrated Auth (WIA), use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.<br/><br/>Default is `AuthnContext.PASSWORD_AUTHN_CTX` where IdP login page is displayed to obtain user/password.|
 
 
 ## Important SAML Endpoints
