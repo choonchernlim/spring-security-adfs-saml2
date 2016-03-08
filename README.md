@@ -42,7 +42,7 @@ Tested against:-
 @EnableWebSecurity
 class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 
-    // See `Configuring SAMLConfigBean` section below for more info. 
+    // See `SAMLConfigBean Properties` section below for more info. 
     @Override
     protected SAMLConfigBean samlConfigBean() {
         return new SAMLConfigBeanBuilder()
@@ -84,7 +84,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 }
 ```
 
-## Configuring SAMLConfigBean
+## SAMLConfigBean Properties
  
 `SAMLConfigBean` stores app-specific security configuration.
 
