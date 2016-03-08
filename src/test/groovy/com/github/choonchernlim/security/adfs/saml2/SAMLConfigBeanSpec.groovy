@@ -27,6 +27,7 @@ class SAMLConfigBeanSpec extends Specification {
             setKeyStoreResource(keystoreResource).
             setKeystoreAlias('keystoreAlias').
             setKeystorePassword('keystorePassword').
+            setKeystorePrivateKeyPassword('keystorePrivateKeyPassword').
             setSuccessLoginDefaultUrl('successLoginDefaultUrl').
             setSuccessLogoutUrl('successLogoutUrl').
             setFailedLoginDefaultUrl('failedLoginDefaultUrl').
@@ -42,6 +43,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.keyStoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
+        bean.keystorePrivateKeyPassword == 'keystorePrivateKeyPassword'
         bean.successLoginDefaultUrl == 'successLoginDefaultUrl'
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == 'failedLoginDefaultUrl'
@@ -62,6 +64,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.keyStoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
+        bean.keystorePrivateKeyPassword == 'keystorePrivateKeyPassword'
         bean.successLoginDefaultUrl == 'successLoginDefaultUrl'
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == ''
@@ -88,13 +91,14 @@ class SAMLConfigBeanSpec extends Specification {
         thrown expectedException
 
         where:
-        field                    | expectedException
-        'AdfsHostName'           | StringBlankPreconditionException
-        'KeyStoreResource'       | ObjectNullPreconditionException
-        'KeystoreAlias'          | StringBlankPreconditionException
-        'KeystorePassword'       | StringBlankPreconditionException
-        'SuccessLoginDefaultUrl' | StringBlankPreconditionException
-        'SuccessLogoutUrl'       | StringBlankPreconditionException
+        field                        | expectedException
+        'AdfsHostName'               | StringBlankPreconditionException
+        'KeyStoreResource'           | ObjectNullPreconditionException
+        'KeystoreAlias'              | StringBlankPreconditionException
+        'KeystorePassword'           | StringBlankPreconditionException
+        'KeystorePrivateKeyPassword' | StringBlankPreconditionException
+        'SuccessLoginDefaultUrl'     | StringBlankPreconditionException
+        'SuccessLogoutUrl'           | StringBlankPreconditionException
     }
 
 }

@@ -251,7 +251,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         return new JKSKeyManager(samlConfigBean().getKeyStoreResource(),
                                  samlConfigBean().getKeystorePassword(),
                                  ImmutableMap.of(samlConfigBean().getKeystoreAlias(),
-                                                 samlConfigBean().getKeystorePassword()),
+                                                 samlConfigBean().getKeystorePrivateKeyPassword()),
                                  samlConfigBean().getKeystoreAlias());
     }
 

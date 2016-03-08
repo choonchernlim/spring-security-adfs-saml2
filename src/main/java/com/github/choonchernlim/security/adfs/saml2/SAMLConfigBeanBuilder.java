@@ -13,6 +13,7 @@ public final class SAMLConfigBeanBuilder {
     private Resource keyStoreResource;
     private String keystoreAlias;
     private String keystorePassword;
+    private String keystorePrivateKeyPassword;
     private String successLoginDefaultUrl;
     private String successLogoutUrl;
     private String failedLoginDefaultUrl;
@@ -36,6 +37,11 @@ public final class SAMLConfigBeanBuilder {
 
     public SAMLConfigBeanBuilder setKeystorePassword(final String keystorePassword) {
         this.keystorePassword = keystorePassword;
+        return this;
+    }
+
+    public SAMLConfigBeanBuilder setKeystorePrivateKeyPassword(final String keystorePrivateKeyPassword) {
+        this.keystorePrivateKeyPassword = keystorePrivateKeyPassword;
         return this;
     }
 
@@ -69,6 +75,7 @@ public final class SAMLConfigBeanBuilder {
                                   keyStoreResource,
                                   keystoreAlias,
                                   keystorePassword,
+                                  keystorePrivateKeyPassword,
                                   successLoginDefaultUrl,
                                   successLogoutUrl,
                                   failedLoginDefaultUrl,

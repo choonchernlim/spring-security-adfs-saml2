@@ -35,6 +35,11 @@ public final class SAMLConfigBean {
     private final String keystorePassword;
 
     /**
+     * (REQUIRED) Keystore private key password.
+     */
+    private final String keystorePrivateKeyPassword;
+
+    /**
      * (REQUIRED) Where to redirect user on successful login if no saved request is found in the session.
      */
     private final String successLoginDefaultUrl;
@@ -75,17 +80,20 @@ public final class SAMLConfigBean {
                    final Resource keyStoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
+                   final String keystorePrivateKeyPassword,
                    final String successLoginDefaultUrl,
                    final String successLogoutUrl,
                    final String failedLoginDefaultUrl,
                    final SAMLUserDetailsService samlUserDetailsService,
                    final Set<String> authnContexts) {
 
+        //@formatter:off
         this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
 
         this.keyStoreResource = (Resource) expect(keyStoreResource, "Key store").not().toBeNull().check();
         this.keystoreAlias = expect(keystoreAlias, "Keystore alias").not().toBeBlank().check();
         this.keystorePassword = expect(keystorePassword, "Keystore password").not().toBeBlank().check();
+        this.keystorePrivateKeyPassword = expect(keystorePrivateKeyPassword, "Keystore private key password").not().toBeBlank().check();
 
         this.successLoginDefaultUrl = expect(successLoginDefaultUrl, "Success login URL").not().toBeBlank().check();
         this.successLogoutUrl = expect(successLogoutUrl, "Success logout URL").not().toBeBlank().check();
@@ -95,6 +103,7 @@ public final class SAMLConfigBean {
         this.samlUserDetailsService = samlUserDetailsService;
 
         this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
+        //@formatter:on
     }
 
     public String getAdfsHostName() {
@@ -111,6 +120,10 @@ public final class SAMLConfigBean {
 
     public String getKeystorePassword() {
         return keystorePassword;
+    }
+
+    public String getKeystorePrivateKeyPassword() {
+        return keystorePrivateKeyPassword;
     }
 
     public String getSuccessLoginDefaultUrl() {
