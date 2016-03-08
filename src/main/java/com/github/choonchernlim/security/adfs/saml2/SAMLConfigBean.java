@@ -22,7 +22,7 @@ public final class SAMLConfigBean {
     /**
      * (REQUIRED) Keystore containing app's public/private key and ADFS' certificate with public key.
      */
-    private final Resource keyStoreResource;
+    private final Resource keystoreResource;
 
     /**
      * (REQUIRED) Keystore alias.
@@ -77,7 +77,7 @@ public final class SAMLConfigBean {
     private final Set<String> authnContexts;
 
     SAMLConfigBean(final String adfsHostName,
-                   final Resource keyStoreResource,
+                   final Resource keystoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
                    final String keystorePrivateKeyPassword,
@@ -90,7 +90,7 @@ public final class SAMLConfigBean {
         //@formatter:off
         this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
 
-        this.keyStoreResource = (Resource) expect(keyStoreResource, "Key store").not().toBeNull().check();
+        this.keystoreResource = (Resource) expect(keystoreResource, "Key store").not().toBeNull().check();
         this.keystoreAlias = expect(keystoreAlias, "Keystore alias").not().toBeBlank().check();
         this.keystorePassword = expect(keystorePassword, "Keystore password").not().toBeBlank().check();
         this.keystorePrivateKeyPassword = expect(keystorePrivateKeyPassword, "Keystore private key password").not().toBeBlank().check();
@@ -110,8 +110,8 @@ public final class SAMLConfigBean {
         return adfsHostName;
     }
 
-    public Resource getKeyStoreResource() {
-        return keyStoreResource;
+    public Resource getKeystoreResource() {
+        return keystoreResource;
     }
 
     public String getKeystoreAlias() {

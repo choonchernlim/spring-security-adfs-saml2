@@ -1,5 +1,10 @@
 # Change Log
 
+
+## 0.2.2 - 2016-03-08
+
+* Fixed casing typo from `SAMLConfigBean.keyStoreResource` to `SAMLConfigBean.keystoreResource`.
+
 ## 0.2.1 - 2016-03-07
 
 * Added `SAMLConfigBean.keystorePrivateKeyPassword` to add password for private key.

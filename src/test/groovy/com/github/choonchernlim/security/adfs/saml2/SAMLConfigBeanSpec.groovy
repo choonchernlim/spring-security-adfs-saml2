@@ -24,7 +24,7 @@ class SAMLConfigBeanSpec extends Specification {
     }
     def allFieldsBeanBuilder = new SAMLConfigBeanBuilder().
             setAdfsHostName('adfsHostName').
-            setKeyStoreResource(keystoreResource).
+            setKeystoreResource(keystoreResource).
             setKeystoreAlias('keystoreAlias').
             setKeystorePassword('keystorePassword').
             setKeystorePrivateKeyPassword('keystorePrivateKeyPassword').
@@ -40,7 +40,7 @@ class SAMLConfigBeanSpec extends Specification {
 
         then:
         bean.adfsHostName == 'adfsHostName'
-        bean.keyStoreResource == keystoreResource
+        bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
         bean.keystorePrivateKeyPassword == 'keystorePrivateKeyPassword'
@@ -61,7 +61,7 @@ class SAMLConfigBeanSpec extends Specification {
 
         then:
         bean.adfsHostName == 'adfsHostName'
-        bean.keyStoreResource == keystoreResource
+        bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
         bean.keystorePrivateKeyPassword == 'keystorePrivateKeyPassword'
@@ -93,7 +93,7 @@ class SAMLConfigBeanSpec extends Specification {
         where:
         field                        | expectedException
         'AdfsHostName'               | StringBlankPreconditionException
-        'KeyStoreResource'           | ObjectNullPreconditionException
+        'KeystoreResource'           | ObjectNullPreconditionException
         'KeystoreAlias'              | StringBlankPreconditionException
         'KeystorePassword'           | StringBlankPreconditionException
         'KeystorePrivateKeyPassword' | StringBlankPreconditionException

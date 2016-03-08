@@ -20,7 +20,7 @@ Tested against:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
 </dependency>
 ```
 
@@ -48,8 +48,8 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
         return new SAMLConfigBeanBuilder()
                 .setAdfsHostName("idp-adfs-server")
                 .setKeyStoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
-                .setKeystoreAlias("alias")
                 .setKeystorePassword("storepass")
+                .setKeystoreAlias("alias")
                 .setKeystorePrivateKeyPassword("keypass")
                 .setSuccessLoginDefaultUrl("/")
                 .setSuccessLogoutUrl("/goodbye")
@@ -92,8 +92,8 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 |---------------------------|----------|----------------------------------------------------------------------------------------------------------|
 |adfsHostName               |Yes       |ADFS host name without HTTPS protocol.<p>If ADFS link is `https://idp-adfs-server/adfs/ls`, the value should be `idp-adfs-server`.|
 |keyStoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
-|keystoreAlias              |Yes       |Alias of app's public/private key pair.                                                                   |
 |keystorePassword           |Yes       |Password to access app's keystore.                                                                        |
+|keystoreAlias              |Yes       |Alias of app's public/private key pair.                                                                   |
 |keystorePrivateKeyPassword |Yes       |Password to access app's private key.                                                                     |
 |successLoginDefaultUrl     |Yes       |Where to redirect user on successful login if no saved request is found in the session.                   |
 |successLogoutUrl           |Yes       |Where to redirect user on successful logout.                                                              |

@@ -248,7 +248,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Central storage of cryptographic keys
     @Bean
     public KeyManager keyManager() {
-        return new JKSKeyManager(samlConfigBean().getKeyStoreResource(),
+        return new JKSKeyManager(samlConfigBean().getKeystoreResource(),
                                  samlConfigBean().getKeystorePassword(),
                                  ImmutableMap.of(samlConfigBean().getKeystoreAlias(),
                                                  samlConfigBean().getKeystorePrivateKeyPassword()),
