@@ -171,27 +171,28 @@ import java.util.Timer;
     public MetadataGeneratorFilter metadataGeneratorFilter() {
 <span class="nc" id="L172">        MetadataGenerator metadataGenerator = new MetadataGenerator();</span>
 <span class="nc" id="L173">        metadataGenerator.setKeyManager(keyManager());</span>
-<span class="nc" id="L174">        return new MetadataGeneratorFilter(metadataGenerator);</span>
+<span class="nc" id="L174">        metadataGenerator.setEntityBaseURL(samlConfigBean().getSpMetadataBaseUrl());</span>
+<span class="nc" id="L175">        return new MetadataGeneratorFilter(metadataGenerator);</span>
     }
 
     // HTTP client
     @Bean
     public HttpClient httpClient() {
-<span class="nc" id="L180">        return new HttpClient(new MultiThreadedHttpConnectionManager());</span>
+<span class="nc" id="L181">        return new HttpClient(new MultiThreadedHttpConnectionManager());</span>
     }
 
     // Filters for processing of SAML messages
     @Bean
     public FilterChainProxy filterChainProxy() throws Exception {
         //@formatter:off
-<span class="nc" id="L187">        return new FilterChainProxy(ImmutableList.&lt;SecurityFilterChain&gt;of(</span>
-<span class="nc" id="L188">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/login/**&quot;), samlEntryPoint()),</span>
-<span class="nc" id="L189">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/logout/**&quot;), samlLogoutFilter()),</span>
-<span class="nc" id="L190">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/metadata/**&quot;), metadataDisplayFilter()),</span>
-<span class="nc" id="L191">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SSO/**&quot;), samlProcessingFilter()),</span>
-<span class="nc" id="L192">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SSOHoK/**&quot;), samlWebSSOHoKProcessingFilter()),</span>
-<span class="nc" id="L193">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SingleLogout/**&quot;), samlLogoutProcessingFilter()),</span>
-<span class="nc" id="L194">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/discovery/**&quot;), samlIDPDiscovery())</span>
+<span class="nc" id="L188">        return new FilterChainProxy(ImmutableList.&lt;SecurityFilterChain&gt;of(</span>
+<span class="nc" id="L189">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/login/**&quot;), samlEntryPoint()),</span>
+<span class="nc" id="L190">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/logout/**&quot;), samlLogoutFilter()),</span>
+<span class="nc" id="L191">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/metadata/**&quot;), metadataDisplayFilter()),</span>
+<span class="nc" id="L192">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SSO/**&quot;), samlProcessingFilter()),</span>
+<span class="nc" id="L193">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SSOHoK/**&quot;), samlWebSSOHoKProcessingFilter()),</span>
+<span class="nc" id="L194">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/SingleLogout/**&quot;), samlLogoutProcessingFilter()),</span>
+<span class="nc" id="L195">                new DefaultSecurityFilterChain(new AntPathRequestMatcher(&quot;/saml/discovery/**&quot;), samlIDPDiscovery())</span>
         ));
         //@formatter:on
     }
@@ -199,266 +200,266 @@ import java.util.Timer;
     // Handler deciding where to redirect user after successful login
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
-<span class="nc" id="L202">        SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler = new SavedRequestAwareAuthenticationSuccessHandler();</span>
-<span class="nc" id="L203">        successRedirectHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLoginDefaultUrl());</span>
-<span class="nc" id="L204">        return successRedirectHandler;</span>
+<span class="nc" id="L203">        SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler = new SavedRequestAwareAuthenticationSuccessHandler();</span>
+<span class="nc" id="L204">        successRedirectHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLoginDefaultUrl());</span>
+<span class="nc" id="L205">        return successRedirectHandler;</span>
     }
 
     // Handler deciding where to redirect user after failed login
     @Bean
     public SimpleUrlAuthenticationFailureHandler failureRedirectHandler() {
-<span class="nc" id="L210">        SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();</span>
+<span class="nc" id="L211">        SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();</span>
 
         // The precondition on `setDefaultFailureUrl(..)` will cause an exception if the value is null.
         // So, only set this value if it is not null
-<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (!samlConfigBean().getFailedLoginDefaultUrl().isEmpty()) {</span>
-<span class="nc" id="L215">            failureHandler.setDefaultFailureUrl(samlConfigBean().getFailedLoginDefaultUrl());</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (!samlConfigBean().getFailedLoginDefaultUrl().isEmpty()) {</span>
+<span class="nc" id="L216">            failureHandler.setDefaultFailureUrl(samlConfigBean().getFailedLoginDefaultUrl());</span>
         }
 
-<span class="nc" id="L218">        return failureHandler;</span>
+<span class="nc" id="L219">        return failureHandler;</span>
     }
 
     // Handler for successful logout
     @Bean
     public SimpleUrlLogoutSuccessHandler successLogoutHandler() {
-<span class="nc" id="L224">        SimpleUrlLogoutSuccessHandler successLogoutHandler = new SimpleUrlLogoutSuccessHandler();</span>
-<span class="nc" id="L225">        successLogoutHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLogoutUrl());</span>
-<span class="nc" id="L226">        return successLogoutHandler;</span>
+<span class="nc" id="L225">        SimpleUrlLogoutSuccessHandler successLogoutHandler = new SimpleUrlLogoutSuccessHandler();</span>
+<span class="nc" id="L226">        successLogoutHandler.setDefaultTargetUrl(samlConfigBean().getSuccessLogoutUrl());</span>
+<span class="nc" id="L227">        return successLogoutHandler;</span>
     }
 
     // Authentication manager
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
-<span class="nc" id="L233">        return super.authenticationManagerBean();</span>
+<span class="nc" id="L234">        return super.authenticationManagerBean();</span>
     }
 
     // Register authentication manager for SAML provider
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-<span class="nc" id="L239">        auth.authenticationProvider(samlAuthenticationProvider);</span>
-<span class="nc" id="L240">    }</span>
+<span class="nc" id="L240">        auth.authenticationProvider(samlAuthenticationProvider);</span>
+<span class="nc" id="L241">    }</span>
 
     // Logger for SAML messages and events
     @Bean
     public SAMLDefaultLogger samlLogger() {
-<span class="nc" id="L245">        return new SAMLDefaultLogger();</span>
+<span class="nc" id="L246">        return new SAMLDefaultLogger();</span>
     }
 
     // Central storage of cryptographic keys
     @Bean
     public KeyManager keyManager() {
-<span class="nc" id="L251">        return new JKSKeyManager(samlConfigBean().getKeystoreResource(),</span>
-<span class="nc" id="L252">                                 samlConfigBean().getKeystorePassword(),</span>
-<span class="nc" id="L253">                                 ImmutableMap.of(samlConfigBean().getKeystoreAlias(),</span>
-<span class="nc" id="L254">                                                 samlConfigBean().getKeystorePrivateKeyPassword()),</span>
-<span class="nc" id="L255">                                 samlConfigBean().getKeystoreAlias());</span>
+<span class="nc" id="L252">        return new JKSKeyManager(samlConfigBean().getKeystoreResource(),</span>
+<span class="nc" id="L253">                                 samlConfigBean().getKeystorePassword(),</span>
+<span class="nc" id="L254">                                 ImmutableMap.of(samlConfigBean().getKeystoreAlias(),</span>
+<span class="nc" id="L255">                                                 samlConfigBean().getKeystorePrivateKeyPassword()),</span>
+<span class="nc" id="L256">                                 samlConfigBean().getKeystoreAlias());</span>
     }
 
     // IDP Discovery service
     @Bean
     public SAMLDiscovery samlIDPDiscovery() {
-<span class="nc" id="L261">        return new SAMLDiscovery();</span>
+<span class="nc" id="L262">        return new SAMLDiscovery();</span>
     }
 
     // The filter is waiting for connections on URL suffixed with filterSuffix and presents SP metadata there
     @Bean
     public MetadataDisplayFilter metadataDisplayFilter() {
-<span class="nc" id="L267">        return new MetadataDisplayFilter();</span>
+<span class="nc" id="L268">        return new MetadataDisplayFilter();</span>
     }
 
     // Configure HTTP Client to accept certificates from the keystore instead of JDK keystore  for HTTPS verification
     @Bean
     public TLSProtocolConfigurer tlsProtocolConfigurer() {
-<span class="nc" id="L273">        return new TLSProtocolConfigurer();</span>
+<span class="nc" id="L274">        return new TLSProtocolConfigurer();</span>
     }
 
     // Configure TLSProtocolConfigurer
     @Bean
     public ProtocolSocketFactory protocolSocketFactory() {
-<span class="nc" id="L279">        return new TLSProtocolSocketFactory(keyManager(), null, &quot;default&quot;);</span>
+<span class="nc" id="L280">        return new TLSProtocolSocketFactory(keyManager(), null, &quot;default&quot;);</span>
     }
 
     // Configure TLSProtocolConfigurer
     @Bean
     public Protocol protocol() {
-<span class="nc" id="L285">        return new Protocol(&quot;https&quot;, protocolSocketFactory(), 443);</span>
+<span class="nc" id="L286">        return new Protocol(&quot;https&quot;, protocolSocketFactory(), 443);</span>
     }
 
     // Configure TLSProtocolConfigurer
     @Bean
     public MethodInvokingFactoryBean socketFactoryInitialization() {
-<span class="nc" id="L291">        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();</span>
-<span class="nc" id="L292">        methodInvokingFactoryBean.setTargetClass(Protocol.class);</span>
-<span class="nc" id="L293">        methodInvokingFactoryBean.setTargetMethod(&quot;registerProtocol&quot;);</span>
-<span class="nc" id="L294">        methodInvokingFactoryBean.setArguments(new Object[]{&quot;https&quot;, protocol()});</span>
-<span class="nc" id="L295">        return methodInvokingFactoryBean;</span>
+<span class="nc" id="L292">        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();</span>
+<span class="nc" id="L293">        methodInvokingFactoryBean.setTargetClass(Protocol.class);</span>
+<span class="nc" id="L294">        methodInvokingFactoryBean.setTargetMethod(&quot;registerProtocol&quot;);</span>
+<span class="nc" id="L295">        methodInvokingFactoryBean.setArguments(new Object[]{&quot;https&quot;, protocol()});</span>
+<span class="nc" id="L296">        return methodInvokingFactoryBean;</span>
     }
 
     // IDP Metadata configuration - paths to metadata of IDPs in circle of trust is here
     @Bean
     public CachingMetadataManager metadata() throws MetadataProviderException {
-<span class="nc" id="L301">        HTTPMetadataProvider httpMetadataProvider = new HTTPMetadataProvider(new Timer(true),</span>
-<span class="nc" id="L302">                                                                             httpClient(),</span>
-<span class="nc" id="L303">                                                                             getMetdataUrl());</span>
-<span class="nc" id="L304">        httpMetadataProvider.setParserPool(parserPool());</span>
+<span class="nc" id="L302">        HTTPMetadataProvider httpMetadataProvider = new HTTPMetadataProvider(new Timer(true),</span>
+<span class="nc" id="L303">                                                                             httpClient(),</span>
+<span class="nc" id="L304">                                                                             getMetdataUrl());</span>
+<span class="nc" id="L305">        httpMetadataProvider.setParserPool(parserPool());</span>
 
-<span class="nc" id="L306">        ExtendedMetadataDelegate extendedMetadataDelegate = new ExtendedMetadataDelegate(httpMetadataProvider);</span>
+<span class="nc" id="L307">        ExtendedMetadataDelegate extendedMetadataDelegate = new ExtendedMetadataDelegate(httpMetadataProvider);</span>
         // Disable metadata trust check to prevent &quot;Signature trust establishment failed for metadata entry&quot; exception
-<span class="nc" id="L308">        extendedMetadataDelegate.setMetadataTrustCheck(false);</span>
+<span class="nc" id="L309">        extendedMetadataDelegate.setMetadataTrustCheck(false);</span>
 
-<span class="nc" id="L310">        return new CachingMetadataManager(ImmutableList.&lt;MetadataProvider&gt;of(extendedMetadataDelegate));</span>
+<span class="nc" id="L311">        return new CachingMetadataManager(ImmutableList.&lt;MetadataProvider&gt;of(extendedMetadataDelegate));</span>
     }
 
     // SAML Authentication Provider responsible for validating of received SAML messages
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
-<span class="nc" id="L316">        SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();</span>
-<span class="nc bnc" id="L317" title="All 2 branches missed.">        if (samlConfigBean().getSamlUserDetailsService() != null) {</span>
-<span class="nc" id="L318">            samlAuthenticationProvider.setUserDetails(samlConfigBean().getSamlUserDetailsService());</span>
+<span class="nc" id="L317">        SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (samlConfigBean().getSamlUserDetailsService() != null) {</span>
+<span class="nc" id="L319">            samlAuthenticationProvider.setUserDetails(samlConfigBean().getSamlUserDetailsService());</span>
         }
-<span class="nc" id="L320">        return samlAuthenticationProvider;</span>
+<span class="nc" id="L321">        return samlAuthenticationProvider;</span>
     }
 
     // Provider of default SAML Context
     @Bean
     public SAMLContextProviderImpl contextProvider() {
-<span class="nc" id="L326">        return new SAMLContextProviderImpl();</span>
+<span class="nc" id="L327">        return new SAMLContextProviderImpl();</span>
     }
 
     // Processing filter for WebSSO profile messages
     @Bean
     public SAMLProcessingFilter samlProcessingFilter() throws Exception {
-<span class="nc" id="L332">        SAMLProcessingFilter samlWebSSOProcessingFilter = new SAMLProcessingFilter();</span>
-<span class="nc" id="L333">        samlWebSSOProcessingFilter.setAuthenticationManager(authenticationManager());</span>
-<span class="nc" id="L334">        samlWebSSOProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());</span>
-<span class="nc" id="L335">        samlWebSSOProcessingFilter.setAuthenticationFailureHandler(failureRedirectHandler());</span>
-<span class="nc" id="L336">        return samlWebSSOProcessingFilter;</span>
+<span class="nc" id="L333">        SAMLProcessingFilter samlWebSSOProcessingFilter = new SAMLProcessingFilter();</span>
+<span class="nc" id="L334">        samlWebSSOProcessingFilter.setAuthenticationManager(authenticationManager());</span>
+<span class="nc" id="L335">        samlWebSSOProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());</span>
+<span class="nc" id="L336">        samlWebSSOProcessingFilter.setAuthenticationFailureHandler(failureRedirectHandler());</span>
+<span class="nc" id="L337">        return samlWebSSOProcessingFilter;</span>
     }
 
     // Processing filter for WebSSO Holder-of-Key profile
     @Bean
     public SAMLWebSSOHoKProcessingFilter samlWebSSOHoKProcessingFilter() throws Exception {
-<span class="nc" id="L342">        SAMLWebSSOHoKProcessingFilter samlWebSSOHoKProcessingFilter = new SAMLWebSSOHoKProcessingFilter();</span>
-<span class="nc" id="L343">        samlWebSSOHoKProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());</span>
-<span class="nc" id="L344">        samlWebSSOHoKProcessingFilter.setAuthenticationManager(authenticationManager());</span>
-<span class="nc" id="L345">        samlWebSSOHoKProcessingFilter.setAuthenticationFailureHandler(failureRedirectHandler());</span>
-<span class="nc" id="L346">        return samlWebSSOHoKProcessingFilter;</span>
+<span class="nc" id="L343">        SAMLWebSSOHoKProcessingFilter samlWebSSOHoKProcessingFilter = new SAMLWebSSOHoKProcessingFilter();</span>
+<span class="nc" id="L344">        samlWebSSOHoKProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());</span>
+<span class="nc" id="L345">        samlWebSSOHoKProcessingFilter.setAuthenticationManager(authenticationManager());</span>
+<span class="nc" id="L346">        samlWebSSOHoKProcessingFilter.setAuthenticationFailureHandler(failureRedirectHandler());</span>
+<span class="nc" id="L347">        return samlWebSSOHoKProcessingFilter;</span>
     }
 
     // Logout handler terminating local session
     @Bean
     public SecurityContextLogoutHandler logoutHandler() {
-<span class="nc" id="L352">        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();</span>
-<span class="nc" id="L353">        logoutHandler.setInvalidateHttpSession(true);</span>
-<span class="nc" id="L354">        logoutHandler.setClearAuthentication(true);</span>
-<span class="nc" id="L355">        return logoutHandler;</span>
+<span class="nc" id="L353">        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();</span>
+<span class="nc" id="L354">        logoutHandler.setInvalidateHttpSession(true);</span>
+<span class="nc" id="L355">        logoutHandler.setClearAuthentication(true);</span>
+<span class="nc" id="L356">        return logoutHandler;</span>
     }
 
     // Override default logout processing filter with the one processing SAML messages
     @Bean
     public SAMLLogoutFilter samlLogoutFilter() {
-<span class="nc" id="L361">        return new SAMLLogoutFilter(successLogoutHandler(),</span>
-<span class="nc" id="L362">                                    new LogoutHandler[]{logoutHandler()},</span>
-<span class="nc" id="L363">                                    new LogoutHandler[]{logoutHandler()});</span>
+<span class="nc" id="L362">        return new SAMLLogoutFilter(successLogoutHandler(),</span>
+<span class="nc" id="L363">                                    new LogoutHandler[]{logoutHandler()},</span>
+<span class="nc" id="L364">                                    new LogoutHandler[]{logoutHandler()});</span>
     }
 
     // Filter processing incoming logout messages
     // First argument determines URL user will be redirected to after successful global logout
     @Bean
     public SAMLLogoutProcessingFilter samlLogoutProcessingFilter() {
-<span class="nc" id="L370">        return new SAMLLogoutProcessingFilter(successLogoutHandler(), logoutHandler());</span>
+<span class="nc" id="L371">        return new SAMLLogoutProcessingFilter(successLogoutHandler(), logoutHandler());</span>
     }
 
     // Class loading incoming SAML messages from httpRequest stream
     @Bean
     public SAMLProcessorImpl processor() {
-<span class="nc" id="L376">        return new SAMLProcessorImpl(ImmutableList.&lt;SAMLBinding&gt;of(redirectDeflateBinding(),</span>
-<span class="nc" id="L377">                                                                   postBinding(),</span>
-<span class="nc" id="L378">                                                                   artifactBinding(),</span>
-<span class="nc" id="L379">                                                                   soapBinding(),</span>
-<span class="nc" id="L380">                                                                   paosBinding()));</span>
+<span class="nc" id="L377">        return new SAMLProcessorImpl(ImmutableList.&lt;SAMLBinding&gt;of(redirectDeflateBinding(),</span>
+<span class="nc" id="L378">                                                                   postBinding(),</span>
+<span class="nc" id="L379">                                                                   artifactBinding(),</span>
+<span class="nc" id="L380">                                                                   soapBinding(),</span>
+<span class="nc" id="L381">                                                                   paosBinding()));</span>
     }
 
     // SAML 2.0 WebSSO Assertion Consumer
     @Bean
     public WebSSOProfileConsumer webSSOprofileConsumer() {
-<span class="nc" id="L386">        return new WebSSOProfileConsumerImpl();</span>
+<span class="nc" id="L387">        return new WebSSOProfileConsumerImpl();</span>
     }
 
     // SAML 2.0 Holder-of-Key WebSSO Assertion Consumer
     @Bean
     public WebSSOProfileConsumerHoKImpl hokWebSSOprofileConsumer() {
-<span class="nc" id="L392">        return new WebSSOProfileConsumerHoKImpl();</span>
+<span class="nc" id="L393">        return new WebSSOProfileConsumerHoKImpl();</span>
     }
 
     // SAML 2.0 Web SSO profile
     @Bean
     public WebSSOProfile webSSOprofile() {
-<span class="nc" id="L398">        return new WebSSOProfileImpl();</span>
+<span class="nc" id="L399">        return new WebSSOProfileImpl();</span>
     }
 
     // SAML 2.0 Holder-of-Key Web SSO profile
     @Bean
     public WebSSOProfileConsumerHoKImpl hokWebSSOProfile() {
-<span class="nc" id="L404">        return new WebSSOProfileConsumerHoKImpl();</span>
+<span class="nc" id="L405">        return new WebSSOProfileConsumerHoKImpl();</span>
     }
 
     // SAML 2.0 ECP profile
     @Bean
     public WebSSOProfileECPImpl ecpprofile() {
-<span class="nc" id="L410">        return new WebSSOProfileECPImpl();</span>
+<span class="nc" id="L411">        return new WebSSOProfileECPImpl();</span>
     }
 
     // SAML 2.0 Logout profile
     @Bean
     public SingleLogoutProfile logoutprofile() {
-<span class="nc" id="L416">        return new SingleLogoutProfileImpl();</span>
+<span class="nc" id="L417">        return new SingleLogoutProfileImpl();</span>
     }
 
     // Bindings, encoders and decoders used for creating and parsing messages
     @Bean
     public HTTPPostBinding postBinding() {
-<span class="nc" id="L422">        return new HTTPPostBinding(parserPool(), velocityEngine());</span>
+<span class="nc" id="L423">        return new HTTPPostBinding(parserPool(), velocityEngine());</span>
     }
 
     @Bean
     public HTTPRedirectDeflateBinding redirectDeflateBinding() {
-<span class="nc" id="L427">        return new HTTPRedirectDeflateBinding(parserPool());</span>
+<span class="nc" id="L428">        return new HTTPRedirectDeflateBinding(parserPool());</span>
     }
 
     @Bean
     public HTTPArtifactBinding artifactBinding() {
-<span class="nc" id="L432">        ArtifactResolutionProfileImpl artifactResolutionProfile = new ArtifactResolutionProfileImpl(httpClient());</span>
-<span class="nc" id="L433">        artifactResolutionProfile.setProcessor(new SAMLProcessorImpl(soapBinding()));</span>
-<span class="nc" id="L434">        return new HTTPArtifactBinding(parserPool(), velocityEngine(), artifactResolutionProfile);</span>
+<span class="nc" id="L433">        ArtifactResolutionProfileImpl artifactResolutionProfile = new ArtifactResolutionProfileImpl(httpClient());</span>
+<span class="nc" id="L434">        artifactResolutionProfile.setProcessor(new SAMLProcessorImpl(soapBinding()));</span>
+<span class="nc" id="L435">        return new HTTPArtifactBinding(parserPool(), velocityEngine(), artifactResolutionProfile);</span>
     }
 
     @Bean
     public HTTPSOAP11Binding soapBinding() {
-<span class="nc" id="L439">        return new HTTPSOAP11Binding(parserPool());</span>
+<span class="nc" id="L440">        return new HTTPSOAP11Binding(parserPool());</span>
     }
 
     @Bean
     public HTTPPAOS11Binding paosBinding() {
-<span class="nc" id="L444">        return new HTTPPAOS11Binding(parserPool());</span>
+<span class="nc" id="L445">        return new HTTPPAOS11Binding(parserPool());</span>
     }
 
     // Initialization of the velocity engine
     @Bean
     public VelocityEngine velocityEngine() {
-<span class="nc" id="L450">        return VelocityFactory.getEngine();</span>
+<span class="nc" id="L451">        return VelocityFactory.getEngine();</span>
     }
 
     // XML parser pool needed for OpenSAML parsing
     @Bean(initMethod = &quot;initialize&quot;)
     public StaticBasicParserPool parserPool() {
-<span class="nc" id="L456">        return new StaticBasicParserPool();</span>
+<span class="nc" id="L457">        return new StaticBasicParserPool();</span>
     }
 
     @Bean
     public ParserPoolHolder parserPoolHolder() {
-<span class="nc" id="L461">        return new ParserPoolHolder();</span>
+<span class="nc" id="L462">        return new ParserPoolHolder();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
