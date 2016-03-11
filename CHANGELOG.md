@@ -1,6 +1,11 @@
 # Change Log
 
 
+## 0.3.1 - 2016-03-10
+
+* Added `SAMLConfigBean.spMetadataBaseUrl` to manually specify the Sp's metadata base URL to handle situations where servers do SSL termination (HTTPS -> HTTP).
+* Configured metadata generator to use user defined Sp's metadata base URL when generating SAML endpoints URLs.
+
 ## 0.2.2 - 2016-03-08
 
 * Fixed casing typo from `SAMLConfigBean.keyStoreResource` to `SAMLConfigBean.keystoreResource`.

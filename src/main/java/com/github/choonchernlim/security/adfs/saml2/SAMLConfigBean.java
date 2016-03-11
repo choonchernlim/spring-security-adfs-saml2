@@ -15,6 +15,11 @@ import java.util.Set;
 public final class SAMLConfigBean {
 
     /**
+     * Sp's metadata base URL for constructing SAML endpoints in SAML payload to IdP.
+     */
+    private final String spMetadataBaseUrl;
+
+    /**
      * (REQUIRED) ADFS host name without HTTPS protocol.
      */
     private final String adfsHostName;
@@ -76,7 +81,8 @@ public final class SAMLConfigBean {
      */
     private final Set<String> authnContexts;
 
-    SAMLConfigBean(final String adfsHostName,
+    SAMLConfigBean(final String spMetadataBaseUrl,
+                   final String adfsHostName,
                    final Resource keystoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
@@ -88,6 +94,7 @@ public final class SAMLConfigBean {
                    final Set<String> authnContexts) {
 
         //@formatter:off
+        this.spMetadataBaseUrl = expect(spMetadataBaseUrl, "Sp's metadata base URL").not().toBeBlank().check();
         this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
 
         this.keystoreResource = (Resource) expect(keystoreResource, "Key store").not().toBeNull().check();
@@ -104,6 +111,10 @@ public final class SAMLConfigBean {
 
         this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
         //@formatter:on
+    }
+
+    public String getSpMetadataBaseUrl() {
+        return spMetadataBaseUrl;
     }
 
     public String getAdfsHostName() {

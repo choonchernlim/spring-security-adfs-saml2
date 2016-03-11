@@ -23,6 +23,7 @@ class SAMLConfigBeanSpec extends Specification {
         }
     }
     def allFieldsBeanBuilder = new SAMLConfigBeanBuilder().
+            setSpMetadataBaseUrl('spMetadataBaseUrl').
             setAdfsHostName('adfsHostName').
             setKeystoreResource(keystoreResource).
             setKeystoreAlias('keystoreAlias').
@@ -39,6 +40,7 @@ class SAMLConfigBeanSpec extends Specification {
         def bean = allFieldsBeanBuilder.createSAMLConfigBean()
 
         then:
+        bean.spMetadataBaseUrl == 'spMetadataBaseUrl'
         bean.adfsHostName == 'adfsHostName'
         bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
@@ -60,6 +62,7 @@ class SAMLConfigBeanSpec extends Specification {
                 createSAMLConfigBean()
 
         then:
+        bean.spMetadataBaseUrl == 'spMetadataBaseUrl'
         bean.adfsHostName == 'adfsHostName'
         bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
@@ -92,6 +95,7 @@ class SAMLConfigBeanSpec extends Specification {
 
         where:
         field                        | expectedException
+        'SpMetadataBaseUrl'          | StringBlankPreconditionException
         'AdfsHostName'               | StringBlankPreconditionException
         'KeystoreResource'           | ObjectNullPreconditionException
         'KeystoreAlias'              | StringBlankPreconditionException

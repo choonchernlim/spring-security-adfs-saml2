@@ -171,6 +171,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     public MetadataGeneratorFilter metadataGeneratorFilter() {
         MetadataGenerator metadataGenerator = new MetadataGenerator();
         metadataGenerator.setKeyManager(keyManager());
+        metadataGenerator.setEntityBaseURL(samlConfigBean().getSpMetadataBaseUrl());
         return new MetadataGeneratorFilter(metadataGenerator);
     }
 

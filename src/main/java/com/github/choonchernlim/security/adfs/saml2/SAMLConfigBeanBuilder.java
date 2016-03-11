@@ -9,6 +9,7 @@ import java.util.Set;
  * Builder class for constructing SAMLConfigBean.
  */
 public final class SAMLConfigBeanBuilder {
+    private String spMetadataBaseUrl;
     private String adfsHostName;
     private Resource keystoreResource;
     private String keystoreAlias;
@@ -19,6 +20,11 @@ public final class SAMLConfigBeanBuilder {
     private String failedLoginDefaultUrl;
     private SAMLUserDetailsService samlUserDetailsService;
     private Set<String> authnContexts;
+
+    public SAMLConfigBeanBuilder setSpMetadataBaseUrl(final String spMetadataBaseUrl) {
+        this.spMetadataBaseUrl = spMetadataBaseUrl;
+        return this;
+    }
 
     public SAMLConfigBeanBuilder setAdfsHostName(final String adfsHostName) {
         this.adfsHostName = adfsHostName;
@@ -71,7 +77,8 @@ public final class SAMLConfigBeanBuilder {
     }
 
     public SAMLConfigBean createSAMLConfigBean() {
-        return new SAMLConfigBean(adfsHostName,
+        return new SAMLConfigBean(spMetadataBaseUrl,
+                                  adfsHostName,
                                   keystoreResource,
                                   keystoreAlias,
                                   keystorePassword,
