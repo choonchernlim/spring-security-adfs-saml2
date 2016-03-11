@@ -20,7 +20,7 @@ Tested against:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.2.2</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
@@ -46,6 +46,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
     @Override
     protected SAMLConfigBean samlConfigBean() {
         return new SAMLConfigBeanBuilder()
+                .setSpMetadataBaseUrl("https://localhost:8443/my-app")
                 .setAdfsHostName("idp-adfs-server")
                 .setKeystoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
                 .setKeystorePassword("storepass")
@@ -90,6 +91,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 
 |Property                   |Required? |Description                                                                                               |
 |---------------------------|----------|----------------------------------------------------------------------------------------------------------|
+|spMetadataBaseUrl          |Yes       |Sp's metadata base URL with format `https://server(:port)/contextPath` for constructing SAML endpoints (ex: `/saml/**`). This configuration is important to prevent servers doing SSL termination from generating wrong endpoints.|
 |adfsHostName               |Yes       |ADFS host name without HTTPS protocol.<p>If ADFS link is `https://idp-adfs-server/adfs/ls`, the value should be `idp-adfs-server`.|
 |keystoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
 |keystorePassword           |Yes       |Password to access app's keystore.                                                                        |
