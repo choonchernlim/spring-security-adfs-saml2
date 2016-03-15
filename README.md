@@ -98,10 +98,10 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 
 |Property                   |Required? |Description                                                                                               |
 |---------------------------|----------|----------------------------------------------------------------------------------------------------------|
-|idpServerName              |Yes       |IdP server name.<br/><br/>Used for retrieving IdP metadata using HTTPS. If IdP link is `https://idp-server/adfs/ls`, value should be `idp-server`.         |
-|spServerName               |Yes       |Sp server name. If Sp link is `https://sp-server:8443/myapp`, value should be `sp-server`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
-|spHttpsPort                |No        |Sp HTTPS port. If Sp link is `https://sp-server:8443/myapp`, value should be `8443`.<br/><br/>Default is `443`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
-|spContextPath              |No        |Sp context path. If Sp link is `https://sp-server:8443/myapp`, value should be `/myapp`.<br/><br/>Default is `''`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
+|idpServerName              |Yes       |IdP server name. Used for retrieving IdP metadata using HTTPS. If IdP link is `https://idp-server/adfs/ls`, value should be `idp-server`.                                                                                |
+|spServerName               |Yes       |Sp server name. Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination. If Sp link is `https://sp-server:8443/myapp`, value should be `sp-server`.                            |
+|spHttpsPort                |No        |Sp HTTPS port. Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination. If Sp link is `https://sp-server:8443/myapp`, value should be `8443`. <br/><br/>Default is `443`.      |
+|spContextPath              |No        |Sp context path. Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination. If Sp link is `https://sp-server:8443/myapp`, value should be `/myapp`. <br/><br/>Default is `''`.   |
 |keystoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
 |keystorePassword           |Yes       |Password to access app's keystore.                                                                        |
 |keystoreAlias              |Yes       |Alias of app's public/private key pair.                                                                   |
