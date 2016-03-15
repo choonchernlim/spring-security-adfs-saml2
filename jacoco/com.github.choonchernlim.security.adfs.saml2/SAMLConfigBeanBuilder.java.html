@@ -9,8 +9,10 @@ import java.util.Set;
  * Builder class for constructing SAMLConfigBean.
  */
 <span class="fc" id="L11">public final class SAMLConfigBeanBuilder {</span>
-    private String spMetadataBaseUrl;
-    private String adfsHostName;
+    private String idpServerName;
+    private String spServerName;
+    private Integer spHttpsPort;
+    private String spContextPath;
     private Resource keystoreResource;
     private String keystoreAlias;
     private String keystorePassword;
@@ -21,73 +23,85 @@ import java.util.Set;
     private SAMLUserDetailsService samlUserDetailsService;
     private Set&lt;String&gt; authnContexts;
 
-    public SAMLConfigBeanBuilder setSpMetadataBaseUrl(final String spMetadataBaseUrl) {
-<span class="fc" id="L25">        this.spMetadataBaseUrl = spMetadataBaseUrl;</span>
-<span class="fc" id="L26">        return this;</span>
+    public SAMLConfigBeanBuilder setIdpServerName(final String idpServerName) {
+<span class="fc" id="L27">        this.idpServerName = idpServerName;</span>
+<span class="fc" id="L28">        return this;</span>
     }
 
-    public SAMLConfigBeanBuilder setAdfsHostName(final String adfsHostName) {
-<span class="fc" id="L30">        this.adfsHostName = adfsHostName;</span>
-<span class="fc" id="L31">        return this;</span>
+    public SAMLConfigBeanBuilder setSpServerName(final String spServerName) {
+<span class="fc" id="L32">        this.spServerName = spServerName;</span>
+<span class="fc" id="L33">        return this;</span>
+    }
+
+    public SAMLConfigBeanBuilder setSpHttpsPort(final Integer spHttpsPort) {
+<span class="fc" id="L37">        this.spHttpsPort = spHttpsPort;</span>
+<span class="fc" id="L38">        return this;</span>
+    }
+
+    public SAMLConfigBeanBuilder setSpContextPath(final String spContextPath) {
+<span class="fc" id="L42">        this.spContextPath = spContextPath;</span>
+<span class="fc" id="L43">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setKeystoreResource(final Resource keystoreResource) {
-<span class="fc" id="L35">        this.keystoreResource = keystoreResource;</span>
-<span class="fc" id="L36">        return this;</span>
+<span class="fc" id="L47">        this.keystoreResource = keystoreResource;</span>
+<span class="fc" id="L48">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setKeystoreAlias(final String keystoreAlias) {
-<span class="fc" id="L40">        this.keystoreAlias = keystoreAlias;</span>
-<span class="fc" id="L41">        return this;</span>
+<span class="fc" id="L52">        this.keystoreAlias = keystoreAlias;</span>
+<span class="fc" id="L53">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setKeystorePassword(final String keystorePassword) {
-<span class="fc" id="L45">        this.keystorePassword = keystorePassword;</span>
-<span class="fc" id="L46">        return this;</span>
+<span class="fc" id="L57">        this.keystorePassword = keystorePassword;</span>
+<span class="fc" id="L58">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setKeystorePrivateKeyPassword(final String keystorePrivateKeyPassword) {
-<span class="fc" id="L50">        this.keystorePrivateKeyPassword = keystorePrivateKeyPassword;</span>
-<span class="fc" id="L51">        return this;</span>
+<span class="fc" id="L62">        this.keystorePrivateKeyPassword = keystorePrivateKeyPassword;</span>
+<span class="fc" id="L63">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setSuccessLoginDefaultUrl(final String successLoginDefaultUrl) {
-<span class="fc" id="L55">        this.successLoginDefaultUrl = successLoginDefaultUrl;</span>
-<span class="fc" id="L56">        return this;</span>
+<span class="fc" id="L67">        this.successLoginDefaultUrl = successLoginDefaultUrl;</span>
+<span class="fc" id="L68">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setSuccessLogoutUrl(final String successLogoutUrl) {
-<span class="fc" id="L60">        this.successLogoutUrl = successLogoutUrl;</span>
-<span class="fc" id="L61">        return this;</span>
+<span class="fc" id="L72">        this.successLogoutUrl = successLogoutUrl;</span>
+<span class="fc" id="L73">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setFailedLoginDefaultUrl(final String failedLoginDefaultUrl) {
-<span class="fc" id="L65">        this.failedLoginDefaultUrl = failedLoginDefaultUrl;</span>
-<span class="fc" id="L66">        return this;</span>
+<span class="fc" id="L77">        this.failedLoginDefaultUrl = failedLoginDefaultUrl;</span>
+<span class="fc" id="L78">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setSamlUserDetailsService(final SAMLUserDetailsService samlUserDetailsService) {
-<span class="fc" id="L70">        this.samlUserDetailsService = samlUserDetailsService;</span>
-<span class="fc" id="L71">        return this;</span>
+<span class="fc" id="L82">        this.samlUserDetailsService = samlUserDetailsService;</span>
+<span class="fc" id="L83">        return this;</span>
     }
 
     public SAMLConfigBeanBuilder setAuthnContexts(final Set&lt;String&gt; authnContexts) {
-<span class="fc" id="L75">        this.authnContexts = authnContexts;</span>
-<span class="fc" id="L76">        return this;</span>
+<span class="fc" id="L87">        this.authnContexts = authnContexts;</span>
+<span class="fc" id="L88">        return this;</span>
     }
 
     public SAMLConfigBean createSAMLConfigBean() {
-<span class="fc" id="L80">        return new SAMLConfigBean(spMetadataBaseUrl,</span>
-<span class="fc" id="L81">                                  adfsHostName,</span>
-<span class="fc" id="L82">                                  keystoreResource,</span>
-<span class="fc" id="L83">                                  keystoreAlias,</span>
-<span class="fc" id="L84">                                  keystorePassword,</span>
-<span class="fc" id="L85">                                  keystorePrivateKeyPassword,</span>
-<span class="fc" id="L86">                                  successLoginDefaultUrl,</span>
-<span class="fc" id="L87">                                  successLogoutUrl,</span>
-<span class="fc" id="L88">                                  failedLoginDefaultUrl,</span>
-<span class="fc" id="L89">                                  samlUserDetailsService,</span>
-<span class="fc" id="L90">                                  authnContexts);</span>
+<span class="fc" id="L92">        return new SAMLConfigBean(idpServerName,</span>
+<span class="fc" id="L93">                                  spServerName,</span>
+<span class="fc" id="L94">                                  spHttpsPort,</span>
+<span class="fc" id="L95">                                  spContextPath,</span>
+<span class="fc" id="L96">                                  keystoreResource,</span>
+<span class="fc" id="L97">                                  keystoreAlias,</span>
+<span class="fc" id="L98">                                  keystorePassword,</span>
+<span class="fc" id="L99">                                  keystorePrivateKeyPassword,</span>
+<span class="fc" id="L100">                                  successLoginDefaultUrl,</span>
+<span class="fc" id="L101">                                  successLogoutUrl,</span>
+<span class="fc" id="L102">                                  failedLoginDefaultUrl,</span>
+<span class="fc" id="L103">                                  samlUserDetailsService,</span>
+<span class="fc" id="L104">                                  authnContexts);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

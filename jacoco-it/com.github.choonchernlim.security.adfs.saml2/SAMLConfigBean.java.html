@@ -15,14 +15,28 @@ import java.util.Set;
 public final class SAMLConfigBean {
 
     /**
-     * Sp's metadata base URL for constructing SAML endpoints in SAML payload to IdP.
+     * (REQUIRED) IdP's server name.
      */
-    private final String spMetadataBaseUrl;
+    private final String idpServerName;
 
     /**
-     * (REQUIRED) ADFS host name without HTTPS protocol.
+     * (REQUIRED) Sp's server name.
      */
-    private final String adfsHostName;
+    private final String spServerName;
+
+    /**
+     * (OPTIONAL) Sp's HTTPS port.
+     * &lt;p/&gt;
+     * Default is 443.
+     */
+    private final Integer spHttpsPort;
+
+    /**
+     * (OPTIONAL) Sp's context path.
+     * &lt;p/&gt;
+     * Default is &quot;&quot;.
+     */
+    private final String spContextPath;
 
     /**
      * (REQUIRED) Keystore containing app's public/private key and ADFS' certificate with public key.
@@ -81,8 +95,10 @@ public final class SAMLConfigBean {
      */
     private final Set&lt;String&gt; authnContexts;
 
-<span class="fc" id="L84">    SAMLConfigBean(final String spMetadataBaseUrl,</span>
-                   final String adfsHostName,
+<span class="fc" id="L98">    SAMLConfigBean(final String idpServerName,</span>
+                   final String spServerName,
+                   final Integer spHttpsPort,
+                   final String spContextPath,
                    final Resource keystoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
@@ -94,67 +110,78 @@ public final class SAMLConfigBean {
                    final Set&lt;String&gt; authnContexts) {
 
         //@formatter:off
-<span class="fc" id="L97">        this.spMetadataBaseUrl = expect(spMetadataBaseUrl, &quot;Sp's metadata base URL&quot;).not().toBeBlank().check();</span>
-<span class="fc" id="L98">        this.adfsHostName = expect(adfsHostName, &quot;ADFS host name&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L113">        this.idpServerName = expect(idpServerName, &quot;IdP server name&quot;).not().toBeBlank().check();</span>
 
-<span class="fc" id="L100">        this.keystoreResource = (Resource) expect(keystoreResource, &quot;Key store&quot;).not().toBeNull().check();</span>
-<span class="fc" id="L101">        this.keystoreAlias = expect(keystoreAlias, &quot;Keystore alias&quot;).not().toBeBlank().check();</span>
-<span class="fc" id="L102">        this.keystorePassword = expect(keystorePassword, &quot;Keystore password&quot;).not().toBeBlank().check();</span>
-<span class="fc" id="L103">        this.keystorePrivateKeyPassword = expect(keystorePrivateKeyPassword, &quot;Keystore private key password&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L115">        this.spServerName = expect(spServerName, &quot;Sp server name&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L116">        this.spHttpsPort = Optional.fromNullable(spHttpsPort).or(443);</span>
+<span class="fc" id="L117">        this.spContextPath = Optional.fromNullable(spContextPath).or(&quot;&quot;);</span>
 
-<span class="fc" id="L105">        this.successLoginDefaultUrl = expect(successLoginDefaultUrl, &quot;Success login URL&quot;).not().toBeBlank().check();</span>
-<span class="fc" id="L106">        this.successLogoutUrl = expect(successLogoutUrl, &quot;Success logout URL&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L119">        this.keystoreResource = (Resource) expect(keystoreResource, &quot;Key store&quot;).not().toBeNull().check();</span>
+<span class="fc" id="L120">        this.keystoreAlias = expect(keystoreAlias, &quot;Keystore alias&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L121">        this.keystorePassword = expect(keystorePassword, &quot;Keystore password&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L122">        this.keystorePrivateKeyPassword = expect(keystorePrivateKeyPassword, &quot;Keystore private key password&quot;).not().toBeBlank().check();</span>
 
-<span class="fc" id="L108">        this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or(&quot;&quot;);</span>
+<span class="fc" id="L124">        this.successLoginDefaultUrl = expect(successLoginDefaultUrl, &quot;Success login URL&quot;).not().toBeBlank().check();</span>
+<span class="fc" id="L125">        this.successLogoutUrl = expect(successLogoutUrl, &quot;Success logout URL&quot;).not().toBeBlank().check();</span>
 
-<span class="fc" id="L110">        this.samlUserDetailsService = samlUserDetailsService;</span>
+<span class="fc" id="L127">        this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or(&quot;&quot;);</span>
 
-<span class="fc" id="L112">        this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));</span>
+<span class="fc" id="L129">        this.samlUserDetailsService = samlUserDetailsService;</span>
+
+<span class="fc" id="L131">        this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));</span>
         //@formatter:on
-<span class="fc" id="L114">    }</span>
+<span class="fc" id="L133">    }</span>
 
-    public String getSpMetadataBaseUrl() {
-<span class="fc" id="L117">        return spMetadataBaseUrl;</span>
+    public String getIdpServerName() {
+<span class="fc" id="L136">        return idpServerName;</span>
     }
 
-    public String getAdfsHostName() {
-<span class="fc" id="L121">        return adfsHostName;</span>
+    public String getSpServerName() {
+<span class="fc" id="L140">        return spServerName;</span>
+    }
+
+    public Integer getSpHttpsPort() {
+<span class="fc" id="L144">        return spHttpsPort;</span>
+    }
+
+    public String getSpContextPath() {
+<span class="fc" id="L148">        return spContextPath;</span>
     }
 
     public Resource getKeystoreResource() {
-<span class="fc" id="L125">        return keystoreResource;</span>
+<span class="fc" id="L152">        return keystoreResource;</span>
     }
 
     public String getKeystoreAlias() {
-<span class="fc" id="L129">        return keystoreAlias;</span>
+<span class="fc" id="L156">        return keystoreAlias;</span>
     }
 
     public String getKeystorePassword() {
-<span class="fc" id="L133">        return keystorePassword;</span>
+<span class="fc" id="L160">        return keystorePassword;</span>
     }
 
     public String getKeystorePrivateKeyPassword() {
-<span class="fc" id="L137">        return keystorePrivateKeyPassword;</span>
+<span class="fc" id="L164">        return keystorePrivateKeyPassword;</span>
     }
 
     public String getSuccessLoginDefaultUrl() {
-<span class="fc" id="L141">        return successLoginDefaultUrl;</span>
+<span class="fc" id="L168">        return successLoginDefaultUrl;</span>
     }
 
     public String getSuccessLogoutUrl() {
-<span class="fc" id="L145">        return successLogoutUrl;</span>
+<span class="fc" id="L172">        return successLogoutUrl;</span>
     }
 
     public String getFailedLoginDefaultUrl() {
-<span class="fc" id="L149">        return failedLoginDefaultUrl;</span>
+<span class="fc" id="L176">        return failedLoginDefaultUrl;</span>
     }
 
     public SAMLUserDetailsService getSamlUserDetailsService() {
-<span class="fc" id="L153">        return samlUserDetailsService;</span>
+<span class="fc" id="L180">        return samlUserDetailsService;</span>
     }
 
     public Set&lt;String&gt; getAuthnContexts() {
-<span class="fc" id="L157">        return authnContexts;</span>
+<span class="fc" id="L184">        return authnContexts;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
