@@ -28,7 +28,7 @@ import org.springframework.security.saml.SAMLLogoutFilter;
 import org.springframework.security.saml.SAMLLogoutProcessingFilter;
 import org.springframework.security.saml.SAMLProcessingFilter;
 import org.springframework.security.saml.SAMLWebSSOHoKProcessingFilter;
-import org.springframework.security.saml.context.SAMLContextProviderImpl;
+import org.springframework.security.saml.context.SAMLContextProviderLB;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.key.KeyManager;
 import org.springframework.security.saml.log.SAMLDefaultLogger;
@@ -133,7 +133,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // IDP metadata URL
     private String getMetdataUrl() {
         return String.format("https://%s/federationmetadata/2007-06/federationmetadata.xml",
-                             samlConfigBean().getAdfsHostName());
+                             samlConfigBean().getIdpServerName());
     }
 
     // Entry point to initialize authentication
@@ -169,9 +169,19 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Filter automatically generates default SP metadata
     @Bean
     public MetadataGeneratorFilter metadataGeneratorFilter() {
+        // generates base URL that matches `SAMLContextProviderLB` configuration
+        // to ensure SAML endpoints work for server doing SSL termination
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://").append(samlConfigBean().getSpServerName());
+        if (samlConfigBean().getSpHttpsPort() != 443) {
+            sb.append(":").append(samlConfigBean().getSpHttpsPort());
+        }
+        sb.append(samlConfigBean().getSpContextPath());
+        String entityBaseUrl = sb.toString();
+
         MetadataGenerator metadataGenerator = new MetadataGenerator();
         metadataGenerator.setKeyManager(keyManager());
-        metadataGenerator.setEntityBaseURL(samlConfigBean().getSpMetadataBaseUrl());
+        metadataGenerator.setEntityBaseURL(entityBaseUrl);
         return new MetadataGeneratorFilter(metadataGenerator);
     }
 
@@ -321,10 +331,22 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         return samlAuthenticationProvider;
     }
 
-    // Provider of default SAML Context
+    // In order to get SAML to work for Sp servers doing SSL termination, `SAMLContextProviderLB` has
+    // to be used instead of `SAMLContextProviderImpl` to prevent the following exception:-
+    //
+    // "SAML message intended destination endpoint 'https://server/app/saml/SSO' did not match the
+    // recipient endpoint 'http://server/app/saml/SSO'"
+    //
+    // This configuration will work for Sp servers (not) doing SSL termination.
     @Bean
-    public SAMLContextProviderImpl contextProvider() {
-        return new SAMLContextProviderImpl();
+    public SAMLContextProviderLB contextProvider() {
+        SAMLContextProviderLB contextProviderLB = new SAMLContextProviderLB();
+        contextProviderLB.setScheme("https");
+        contextProviderLB.setServerName(samlConfigBean().getSpServerName());
+        contextProviderLB.setServerPort(samlConfigBean().getSpHttpsPort());
+        contextProviderLB.setIncludeServerPortInRequestURL(samlConfigBean().getSpHttpsPort() != 443);
+        contextProviderLB.setContextPath(samlConfigBean().getSpContextPath());
+        return contextProviderLB;
     }
 
     // Processing filter for WebSSO profile messages

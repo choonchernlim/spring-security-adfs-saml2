@@ -5,14 +5,20 @@ Spring Security module for service provider (Sp) to authenticate against identit
 How this module is configured:-
 
 * `HTTP-Redirect` binding for sending SAML messages to IdP.
+* Handles Sp servers doing SSL termination.
 * Default authentication method is user/password using IdP's form login page. 
-* Default signature algorithm is SHA256withRSA.
-* Default digest algorithm is SHA-256.
+* Default signature algorithm is `SHA256withRSA`.
+* Default digest algorithm is `SHA-256`.
 
-Tested against:-
+Tested against Sp's environments:-
 
-* ADFS 2.0 - Windows Server 2008 R2
-* ADFS 2.1 - Windows Server 2012
+* Local Tomcat server without SSL termination.
+* Azure Tomcat server with SSL termination.
+
+Tested against IdP's environments:-
+
+* ADFS 2.0 - Windows Server 2008 R2.
+* ADFS 2.1 - Windows Server 2012.
 
 ## Maven Dependency
 
@@ -20,13 +26,13 @@ Tested against:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
 </dependency>
 ```
 
 ## Prerequisites
 
-* Sp must use HTTPS protocol.
+* Both Sp and IdP must use HTTPS protocol.
 * Java’s default keysize is limited to 128-bit key due to US export laws and a few countries’ import laws. So, Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files must be installed to allow larger key size, such as 256-bit key.
 * Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
     * Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
@@ -46,8 +52,9 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
     @Override
     protected SAMLConfigBean samlConfigBean() {
         return new SAMLConfigBeanBuilder()
-                .setSpMetadataBaseUrl("https://localhost:8443/my-app")
-                .setAdfsHostName("idp-adfs-server")
+                .setIdpServerName("idp-server")
+                .setSpServerName("sp-server")
+                .setSpContextPath("/app")
                 .setKeystoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
                 .setKeystorePassword("storepass")
                 .setKeystoreAlias("alias")
@@ -91,8 +98,10 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 
 |Property                   |Required? |Description                                                                                               |
 |---------------------------|----------|----------------------------------------------------------------------------------------------------------|
-|spMetadataBaseUrl          |Yes       |Sp's metadata base URL with format `https://server(:port)/contextPath` for constructing SAML endpoints (ex: `/saml/**`). This configuration is important to prevent servers doing SSL termination from generating wrong endpoints.|
-|adfsHostName               |Yes       |ADFS host name without HTTPS protocol.<p>If ADFS link is `https://idp-adfs-server/adfs/ls`, the value should be `idp-adfs-server`.|
+|idpServerName              |Yes       |IdP server name.<br/><br/>Used for retrieving IdP metadata using HTTPS. If IdP link is `https://idp-server/adfs/ls`, value should be `idp-server`.         |
+|spServerName               |Yes       |Sp server name. If Sp link is `https://sp-server:8443/myapp`, value should be `sp-server`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
+|spHttpsPort                |No        |Sp HTTPS port. If Sp link is `https://sp-server:8443/myapp`, value should be `8443`.<br/><br/>Default is `443`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
+|spContextPath              |No        |Sp context path. If Sp link is `https://sp-server:8443/myapp`, value should be `/myapp`.<br/><br/>Default is `''`. <br/><br/>Used for generating correct SAML endpoints in Sp metadata to handle servers doing SSL termination.     |
 |keystoreResource           |Yes       |App's keystore containing its public/private key and ADFS' certificate with public key.                   |
 |keystorePassword           |Yes       |Password to access app's keystore.                                                                        |
 |keystoreAlias              |Yes       |Alias of app's public/private key pair.                                                                   |

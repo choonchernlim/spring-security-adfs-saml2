@@ -9,8 +9,10 @@ import java.util.Set;
  * Builder class for constructing SAMLConfigBean.
  */
 public final class SAMLConfigBeanBuilder {
-    private String spMetadataBaseUrl;
-    private String adfsHostName;
+    private String idpServerName;
+    private String spServerName;
+    private Integer spHttpsPort;
+    private String spContextPath;
     private Resource keystoreResource;
     private String keystoreAlias;
     private String keystorePassword;
@@ -21,13 +23,23 @@ public final class SAMLConfigBeanBuilder {
     private SAMLUserDetailsService samlUserDetailsService;
     private Set<String> authnContexts;
 
-    public SAMLConfigBeanBuilder setSpMetadataBaseUrl(final String spMetadataBaseUrl) {
-        this.spMetadataBaseUrl = spMetadataBaseUrl;
+    public SAMLConfigBeanBuilder setIdpServerName(final String idpServerName) {
+        this.idpServerName = idpServerName;
         return this;
     }
 
-    public SAMLConfigBeanBuilder setAdfsHostName(final String adfsHostName) {
-        this.adfsHostName = adfsHostName;
+    public SAMLConfigBeanBuilder setSpServerName(final String spServerName) {
+        this.spServerName = spServerName;
+        return this;
+    }
+
+    public SAMLConfigBeanBuilder setSpHttpsPort(final Integer spHttpsPort) {
+        this.spHttpsPort = spHttpsPort;
+        return this;
+    }
+
+    public SAMLConfigBeanBuilder setSpContextPath(final String spContextPath) {
+        this.spContextPath = spContextPath;
         return this;
     }
 
@@ -77,8 +89,10 @@ public final class SAMLConfigBeanBuilder {
     }
 
     public SAMLConfigBean createSAMLConfigBean() {
-        return new SAMLConfigBean(spMetadataBaseUrl,
-                                  adfsHostName,
+        return new SAMLConfigBean(idpServerName,
+                                  spServerName,
+                                  spHttpsPort,
+                                  spContextPath,
                                   keystoreResource,
                                   keystoreAlias,
                                   keystorePassword,

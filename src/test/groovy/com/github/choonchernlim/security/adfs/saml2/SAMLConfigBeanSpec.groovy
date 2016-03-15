@@ -23,8 +23,10 @@ class SAMLConfigBeanSpec extends Specification {
         }
     }
     def allFieldsBeanBuilder = new SAMLConfigBeanBuilder().
-            setSpMetadataBaseUrl('spMetadataBaseUrl').
-            setAdfsHostName('adfsHostName').
+            setIdpServerName('idpServerName').
+            setSpServerName('spServerName').
+            setSpHttpsPort(8443).
+            setSpContextPath('spContextPath').
             setKeystoreResource(keystoreResource).
             setKeystoreAlias('keystoreAlias').
             setKeystorePassword('keystorePassword').
@@ -40,8 +42,10 @@ class SAMLConfigBeanSpec extends Specification {
         def bean = allFieldsBeanBuilder.createSAMLConfigBean()
 
         then:
-        bean.spMetadataBaseUrl == 'spMetadataBaseUrl'
-        bean.adfsHostName == 'adfsHostName'
+        bean.idpServerName == 'idpServerName'
+        bean.spServerName == 'spServerName'
+        bean.spHttpsPort == 8443
+        bean.spContextPath == 'spContextPath'
         bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
@@ -56,14 +60,18 @@ class SAMLConfigBeanSpec extends Specification {
     def "only required fields"() {
         when:
         def bean = allFieldsBeanBuilder.
+                setSpHttpsPort(null).
+                setSpContextPath(null).
                 setFailedLoginDefaultUrl(null).
                 setSamlUserDetailsService(null).
                 setAuthnContexts(null).
                 createSAMLConfigBean()
 
         then:
-        bean.spMetadataBaseUrl == 'spMetadataBaseUrl'
-        bean.adfsHostName == 'adfsHostName'
+        bean.idpServerName == 'idpServerName'
+        bean.spServerName == 'spServerName'
+        bean.spHttpsPort == 443
+        bean.spContextPath == ''
         bean.keystoreResource == keystoreResource
         bean.keystoreAlias == 'keystoreAlias'
         bean.keystorePassword == 'keystorePassword'
@@ -95,8 +103,8 @@ class SAMLConfigBeanSpec extends Specification {
 
         where:
         field                        | expectedException
-        'SpMetadataBaseUrl'          | StringBlankPreconditionException
-        'AdfsHostName'               | StringBlankPreconditionException
+        'IdpServerName'              | StringBlankPreconditionException
+        'SpServerName'               | StringBlankPreconditionException
         'KeystoreResource'           | ObjectNullPreconditionException
         'KeystoreAlias'              | StringBlankPreconditionException
         'KeystorePassword'           | StringBlankPreconditionException

@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.3.2 - 2016-03-14
+
+* Used `SAMLContextProviderLB` instead of `SAMLContextProviderImpl` to handle servers doing SSL termination.
+* Dropped `SAMLConfigBean.spMetadataBaseUrl`.
+* Renamed `SAMLConfigBean.adfsHostName` to `SAMLConfigBean.idpHostName`.
+* Added `SAMLConfigBean.spServerName`.
+* Added `SAMLConfigBean.spHttpsPort`.
+* Added `SAMLConfigBean.spContextPath`.
 
 ## 0.3.1 - 2016-03-10
 

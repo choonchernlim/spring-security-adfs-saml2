@@ -15,14 +15,28 @@ import java.util.Set;
 public final class SAMLConfigBean {
 
     /**
-     * Sp's metadata base URL for constructing SAML endpoints in SAML payload to IdP.
+     * (REQUIRED) IdP's server name.
      */
-    private final String spMetadataBaseUrl;
+    private final String idpServerName;
 
     /**
-     * (REQUIRED) ADFS host name without HTTPS protocol.
+     * (REQUIRED) Sp's server name.
      */
-    private final String adfsHostName;
+    private final String spServerName;
+
+    /**
+     * (OPTIONAL) Sp's HTTPS port.
+     * <p/>
+     * Default is 443.
+     */
+    private final Integer spHttpsPort;
+
+    /**
+     * (OPTIONAL) Sp's context path.
+     * <p/>
+     * Default is "".
+     */
+    private final String spContextPath;
 
     /**
      * (REQUIRED) Keystore containing app's public/private key and ADFS' certificate with public key.
@@ -81,8 +95,10 @@ public final class SAMLConfigBean {
      */
     private final Set<String> authnContexts;
 
-    SAMLConfigBean(final String spMetadataBaseUrl,
-                   final String adfsHostName,
+    SAMLConfigBean(final String idpServerName,
+                   final String spServerName,
+                   final Integer spHttpsPort,
+                   final String spContextPath,
                    final Resource keystoreResource,
                    final String keystoreAlias,
                    final String keystorePassword,
@@ -94,8 +110,11 @@ public final class SAMLConfigBean {
                    final Set<String> authnContexts) {
 
         //@formatter:off
-        this.spMetadataBaseUrl = expect(spMetadataBaseUrl, "Sp's metadata base URL").not().toBeBlank().check();
-        this.adfsHostName = expect(adfsHostName, "ADFS host name").not().toBeBlank().check();
+        this.idpServerName = expect(idpServerName, "IdP server name").not().toBeBlank().check();
+
+        this.spServerName = expect(spServerName, "Sp server name").not().toBeBlank().check();
+        this.spHttpsPort = Optional.fromNullable(spHttpsPort).or(443);
+        this.spContextPath = Optional.fromNullable(spContextPath).or("");
 
         this.keystoreResource = (Resource) expect(keystoreResource, "Key store").not().toBeNull().check();
         this.keystoreAlias = expect(keystoreAlias, "Keystore alias").not().toBeBlank().check();
@@ -113,12 +132,20 @@ public final class SAMLConfigBean {
         //@formatter:on
     }
 
-    public String getSpMetadataBaseUrl() {
-        return spMetadataBaseUrl;
+    public String getIdpServerName() {
+        return idpServerName;
     }
 
-    public String getAdfsHostName() {
-        return adfsHostName;
+    public String getSpServerName() {
+        return spServerName;
+    }
+
+    public Integer getSpHttpsPort() {
+        return spHttpsPort;
+    }
+
+    public String getSpContextPath() {
+        return spContextPath;
     }
 
     public Resource getKeystoreResource() {
