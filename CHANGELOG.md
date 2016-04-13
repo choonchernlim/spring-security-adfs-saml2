@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.3.3 - 2016-04-13                       
+* Inject Spring environment to get access to project properties file. ([#1](https://github.com/choonchernlim/spring-security-adfs-saml2/pull/1))
+
 ## 0.3.2 - 2016-03-14
 
 * Used `SAMLContextProviderLB` instead of `SAMLContextProviderImpl` to handle servers doing SSL termination.

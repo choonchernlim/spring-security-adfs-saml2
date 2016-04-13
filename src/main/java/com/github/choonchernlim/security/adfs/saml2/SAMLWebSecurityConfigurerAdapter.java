@@ -72,7 +72,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.Timer;
 
 /**
@@ -81,7 +80,10 @@ import java.util.Timer;
  */
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-    @Inject
+    /**
+     * Provides an opportunity for child class to access Spring environment, if needed.
+     */
+    @Autowired
     protected Environment env;
 
     @Autowired
