@@ -15,6 +15,7 @@ import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -70,6 +71,8 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.Timer;
 
 /**
@@ -77,6 +80,9 @@ import java.util.Timer;
  * This class should be extended by Sp's Java-based Spring configuration for web security.
  */
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+    @Inject
+    protected Environment env;
 
     @Autowired
     private SAMLAuthenticationProvider samlAuthenticationProvider;
@@ -297,7 +303,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     }
 
     // Configure TLSProtocolConfigurer
-    @Bean
+    @PostConstruct
     public MethodInvokingFactoryBean socketFactoryInitialization() {
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
         methodInvokingFactoryBean.setTargetClass(Protocol.class);
