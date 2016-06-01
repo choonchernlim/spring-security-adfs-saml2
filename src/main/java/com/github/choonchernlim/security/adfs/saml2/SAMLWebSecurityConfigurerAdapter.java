@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.saml.SAMLAuthenticationProvider;
 import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.SAMLDiscovery;
@@ -64,6 +65,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -115,7 +117,8 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
     // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
     protected final HttpSecurity samlizedConfig(final HttpSecurity http) throws Exception {
-        http.httpBasic().authenticationEntryPoint(samlEntryPoint())
+        return http
+                .httpBasic().authenticationEntryPoint(samlEntryPoint())
                 .and()
                 .csrf().ignoringAntMatchers("/saml/**")
                 .and()
@@ -123,8 +126,19 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
                 .and()
                 .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
                 .addFilterAfter(filterChainProxy(), BasicAuthenticationFilter.class);
+    }
 
-        return http;
+    /**
+     * Mocks security by hardcoding a given user so that it will always appear that user is accessing the protected
+     * resources. This is useful to allow developer to bypass any web authentication against ADFS during rapid
+     * app development.
+     *
+     * @param http HttpSecurity instance
+     * @param user User instance
+     * @return HttpSecurity that will never authenticate against ADFS
+     */
+    protected final HttpSecurity mockSecurity(final HttpSecurity http, final User user) {
+        return http.addFilterBefore(new MockFilterSecurityInterceptor(user), FilterSecurityInterceptor.class);
     }
 
     /**
