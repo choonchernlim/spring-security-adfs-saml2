@@ -1,6 +1,8 @@
 # Change Log
 
-## 0.3.4 - 2016-06-01
+## 0.4.0 - 2016-06-01
+
+* If `samlConfigBean.samlUserDetailsService` is provided, then set `samlAuthenticationProvider.forcePrincipalAsString` to `false` so that `principal` represents the `userDetails` object.
 
 * Dependency, parent and plugins updates.
 

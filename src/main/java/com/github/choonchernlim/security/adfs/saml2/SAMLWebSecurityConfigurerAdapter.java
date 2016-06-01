@@ -48,6 +48,7 @@ import org.springframework.security.saml.processor.SAMLBinding;
 import org.springframework.security.saml.processor.SAMLProcessorImpl;
 import org.springframework.security.saml.trust.httpclient.TLSProtocolConfigurer;
 import org.springframework.security.saml.trust.httpclient.TLSProtocolSocketFactory;
+import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.security.saml.websso.ArtifactResolutionProfileImpl;
 import org.springframework.security.saml.websso.SingleLogoutProfile;
@@ -333,9 +334,18 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
-        if (samlConfigBean().getSamlUserDetailsService() != null) {
-            samlAuthenticationProvider.setUserDetails(samlConfigBean().getSamlUserDetailsService());
+        SAMLUserDetailsService samlUserDetailsService = samlConfigBean().getSamlUserDetailsService();
+
+        if (samlUserDetailsService != null) {
+            samlAuthenticationProvider.setUserDetails(samlUserDetailsService);
+
+            // By default, `principal` is always going to be `NameID` even though the `Authentication` object
+            // contain `userDetails` object. So, if `userDetails` is provided, then don't force `principal` as
+            // string so that `principal` represents `userDetails` object.
+            // See: http://stackoverflow.com/questions/33786861/how-to-override-the-nameid-value-in-samlauthenticationprovider
+            samlAuthenticationProvider.setForcePrincipalAsString(false);
         }
+
         return samlAuthenticationProvider;
     }
 
