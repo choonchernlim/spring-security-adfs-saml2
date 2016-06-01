@@ -17,7 +17,7 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
     // keytool -genkeypair -keystore test.jks -storepass test-storepass -alias test-alias -keypass test-keypass -dname cn=test -keyalg RSA -keysize 2048 -sigalg SHA256withRSA
     def keystoreResource = new DefaultResourceLoader().getResource("classpath:test.jks")
 
-    def samlUserDetailsService = new SAMLUserDetailsService() {
+    static def samlUserDetailsService = new SAMLUserDetailsService() {
         @Override
         Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
             return new User('limc', '', [new SimpleGrantedAuthority('ROLE_USER')])
@@ -103,5 +103,29 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         'server' | 443   | '/app'       | 443   | false         | '/app'       | 'https://server/app'
         'server' | 8443  | null         | 8443  | true          | ''           | 'https://server:8443'
         'server' | 8443  | '/app'       | 8443  | true          | '/app'       | 'https://server:8443/app'
+    }
+
+    @Unroll
+    def "authenticationProvider - given samlUserDetailsService as #actualSamlUserDetailsService, then forcePrincipalAsString should be #expectedForcePrincipalAsString"() {
+        given:
+        SAMLUserDetailsService userDetailsService = actualSamlUserDetailsService
+
+        when:
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.
+                        setSamlUserDetailsService(userDetailsService).
+                        createSAMLConfigBean()
+            }
+        }
+
+        then:
+        expectedForcePrincipalAsString == adapter.samlAuthenticationProvider().forcePrincipalAsString
+
+        where:
+        actualSamlUserDetailsService | expectedForcePrincipalAsString
+        null                         | true
+        samlUserDetailsService       | false
     }
 }
