@@ -168,4 +168,22 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         then:
         thrown SpringSecurityAdfsSaml2Exception
     }
+
+    def "mockSecurity - given user and samlUserDetailsService, should not throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, new User('USER', '', []))
+
+        then:
+        notThrown Exception
+    }
 }
