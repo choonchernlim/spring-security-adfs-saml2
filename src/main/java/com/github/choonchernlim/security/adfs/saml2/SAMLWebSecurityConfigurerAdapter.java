@@ -1,5 +1,6 @@
 package com.github.choonchernlim.security.adfs.saml2;
 
+import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.httpclient.HttpClient;
@@ -138,7 +139,16 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      * @return HttpSecurity that will never authenticate against ADFS
      */
     protected final HttpSecurity mockSecurity(final HttpSecurity http, final User user) {
-        // TODO if samlConfigBean.samlUserDetailsService is null, then throw exception
+        expect(user, "user").not().toBeNull().check();
+
+        if (samlConfigBean().getSamlUserDetailsService() == null) {
+            throw new SpringSecurityAdfsSaml2Exception(
+                    "`samlConfigBean.samlUserDetailsService` cannot be null. " +
+                    "When mocking security, the given user details object will be set as principal. " +
+                    "Because setting `samlConfigBean.samlUserDetailsService` will set the user details object as principal, " +
+                    "this property must be configured to ensure the mock security mimics the actual security configuration."
+            );
+        }
 
         return http.addFilterBefore(new MockFilterSecurityInterceptor(user), FilterSecurityInterceptor.class);
     }

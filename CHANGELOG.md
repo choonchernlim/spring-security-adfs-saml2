@@ -2,9 +2,8 @@
 
 ## 0.4.0 - 2016-06-01
 
-
 * If `samlConfigBean.samlUserDetailsService` is provided, then set `samlAuthenticationProvider.forcePrincipalAsString` to `false` so that `principal` represents the `userDetails` object.
-* Ability to mock security to bypass authentication against ADFS during rapid app development.
+* Ability to mock security to bypass authentication against ADFS during rapid app development. To use this, `samlConfigBean.samlUserDetailsService` must be set.
 * Dependency, parent and plugins updates.
 
 ```                  

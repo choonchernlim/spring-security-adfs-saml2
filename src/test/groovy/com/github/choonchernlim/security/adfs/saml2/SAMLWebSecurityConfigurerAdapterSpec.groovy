@@ -1,6 +1,10 @@
 package com.github.choonchernlim.security.adfs.saml2
 
+import com.github.choonchernlim.betterPreconditions.exception.ObjectNullPreconditionException
 import org.springframework.core.io.DefaultResourceLoader
+import org.springframework.security.config.annotation.ObjectPostProcessor
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -127,5 +131,41 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         actualSamlUserDetailsService | expectedForcePrincipalAsString
         null                         | true
         samlUserDetailsService       | false
+    }
+
+    def "mockSecurity - given null user, should throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, null)
+
+        then:
+        thrown ObjectNullPreconditionException
+    }
+
+    def "mockSecurity - given null samlUserDetailsService, should throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.setSamlUserDetailsService(null).createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, new User('USER', '', []))
+
+        then:
+        thrown SpringSecurityAdfsSaml2Exception
     }
 }
