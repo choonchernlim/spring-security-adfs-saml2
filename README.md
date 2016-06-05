@@ -109,7 +109,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 |successLoginDefaultUrl     |Yes       |Where to redirect user on successful login if no saved request is found in the session.                   |
 |successLogoutUrl           |Yes       |Where to redirect user on successful logout.                                                              |
 |failedLoginDefaultUrl      |No        |Where to redirect user on failed login. This value is set to null, which returns 401 error code on failed login. But, in theory, this will never be used because IdP will handled the failed login on IdP login page.<br/><br/>Default is `''`, which return 401 error code.|
-|samlUserDetailsService     |No        |For configuring user authorities (ex: `ROLE_*`) if needed.<br/><br/>Default is `null`.                                       |
+|samlUserDetailsService     |No        |For configuring user details and authorities.<br/><br/>Default is `null`.                                 |
 |authnContexts              |No        |Determine what authentication methods to use. To use the order of authentication methods defined by IdP, set as empty set. To enable Windows Integrated Auth (WIA), use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.<br/><br/>Default is `AuthnContext.PASSWORD_AUTHN_CTX` where IdP login page is displayed to obtain user/password.|
 
 

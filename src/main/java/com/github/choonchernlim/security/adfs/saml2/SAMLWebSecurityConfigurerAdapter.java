@@ -138,6 +138,8 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      * @return HttpSecurity that will never authenticate against ADFS
      */
     protected final HttpSecurity mockSecurity(final HttpSecurity http, final User user) {
+        // TODO if samlConfigBean.samlUserDetailsService is null, then throw exception
+
         return http.addFilterBefore(new MockFilterSecurityInterceptor(user), FilterSecurityInterceptor.class);
     }
 
