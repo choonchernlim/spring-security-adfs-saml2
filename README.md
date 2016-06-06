@@ -26,7 +26,7 @@ Tested against IdP's environments:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.3.3</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 
@@ -41,6 +41,8 @@ Tested against IdP's environments:-
         * `keytool -importcert -file idp-adfs-server.cer -keystore keystore.jks -alias idp-adfs-server`
 
 ## Usage 
+
+### Configuration Example 
 
 ```java
 // Create a Java-based Spring configuration that extends SAMLWebSecurityConfigurerAdapter.
@@ -92,6 +94,20 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 }
 ```
 
+### Mocking Security by Harcdoding a Given User for Rapid App Development
+
+```java
+@Override
+protected void configure(final HttpSecurity http) throws Exception {
+    // `CurrentUser` must extend `User`
+    final CurrentUser currentUser = new CurrentUser("First name", "Last Name", "ROLE_ADMIN");
+
+    mockSecurity(http, currentUser)
+               .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
+               .anyRequest().authenticated();
+}
+```
+
 ## SAMLConfigBean Properties
  
 `SAMLConfigBean` stores app-specific security configuration.
@@ -109,7 +125,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 |successLoginDefaultUrl     |Yes       |Where to redirect user on successful login if no saved request is found in the session.                   |
 |successLogoutUrl           |Yes       |Where to redirect user on successful logout.                                                              |
 |failedLoginDefaultUrl      |No        |Where to redirect user on failed login. This value is set to null, which returns 401 error code on failed login. But, in theory, this will never be used because IdP will handled the failed login on IdP login page.<br/><br/>Default is `''`, which return 401 error code.|
-|samlUserDetailsService     |No        |For configuring user authorities (ex: `ROLE_*`) if needed.<br/><br/>Default is `null`.                                       |
+|samlUserDetailsService     |No        |For configuring user details and authorities. When set, `userDetails` will be set as `principal`.<br/><br/>Default is `null`. |
 |authnContexts              |No        |Determine what authentication methods to use. To use the order of authentication methods defined by IdP, set as empty set. To enable Windows Integrated Auth (WIA), use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.<br/><br/>Default is `AuthnContext.PASSWORD_AUTHN_CTX` where IdP login page is displayed to obtain user/password.|
 
 

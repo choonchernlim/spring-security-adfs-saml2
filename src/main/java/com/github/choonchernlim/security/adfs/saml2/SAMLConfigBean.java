@@ -78,7 +78,7 @@ public final class SAMLConfigBean {
     private final String failedLoginDefaultUrl;
 
     /**
-     * For configuring user authorities if needed.
+     * For configuring user details and authorities.
      * <p/>
      * Default is null.
      */

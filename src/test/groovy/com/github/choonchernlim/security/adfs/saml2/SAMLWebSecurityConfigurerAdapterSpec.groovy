@@ -1,6 +1,10 @@
 package com.github.choonchernlim.security.adfs.saml2
 
+import com.github.choonchernlim.betterPreconditions.exception.ObjectNullPreconditionException
 import org.springframework.core.io.DefaultResourceLoader
+import org.springframework.security.config.annotation.ObjectPostProcessor
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -17,7 +21,7 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
     // keytool -genkeypair -keystore test.jks -storepass test-storepass -alias test-alias -keypass test-keypass -dname cn=test -keyalg RSA -keysize 2048 -sigalg SHA256withRSA
     def keystoreResource = new DefaultResourceLoader().getResource("classpath:test.jks")
 
-    def samlUserDetailsService = new SAMLUserDetailsService() {
+    static def samlUserDetailsService = new SAMLUserDetailsService() {
         @Override
         Object loadUserBySAML(final SAMLCredential credential) throws UsernameNotFoundException {
             return new User('limc', '', [new SimpleGrantedAuthority('ROLE_USER')])
@@ -103,5 +107,83 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         'server' | 443   | '/app'       | 443   | false         | '/app'       | 'https://server/app'
         'server' | 8443  | null         | 8443  | true          | ''           | 'https://server:8443'
         'server' | 8443  | '/app'       | 8443  | true          | '/app'       | 'https://server:8443/app'
+    }
+
+    @Unroll
+    def "authenticationProvider - given samlUserDetailsService as #actualSamlUserDetailsService, then forcePrincipalAsString should be #expectedForcePrincipalAsString"() {
+        given:
+        SAMLUserDetailsService userDetailsService = actualSamlUserDetailsService
+
+        when:
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.
+                        setSamlUserDetailsService(userDetailsService).
+                        createSAMLConfigBean()
+            }
+        }
+
+        then:
+        expectedForcePrincipalAsString == adapter.samlAuthenticationProvider().forcePrincipalAsString
+
+        where:
+        actualSamlUserDetailsService | expectedForcePrincipalAsString
+        null                         | true
+        samlUserDetailsService       | false
+    }
+
+    def "mockSecurity - given null user, should throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, null)
+
+        then:
+        thrown ObjectNullPreconditionException
+    }
+
+    def "mockSecurity - given null samlUserDetailsService, should throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.setSamlUserDetailsService(null).createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, new User('USER', '', []))
+
+        then:
+        thrown SpringSecurityAdfsSaml2Exception
+    }
+
+    def "mockSecurity - given user and samlUserDetailsService, should not throw exception"() {
+        given:
+        def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
+
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.createSAMLConfigBean()
+            }
+        }
+
+        when:
+        adapter.mockSecurity(http, new User('USER', '', []))
+
+        then:
+        notThrown Exception
     }
 }

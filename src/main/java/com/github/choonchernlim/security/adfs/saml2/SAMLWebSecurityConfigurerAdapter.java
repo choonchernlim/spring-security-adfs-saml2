@@ -1,5 +1,6 @@
 package com.github.choonchernlim.security.adfs.saml2;
 
+import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.httpclient.HttpClient;
@@ -21,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.saml.SAMLAuthenticationProvider;
 import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.SAMLDiscovery;
@@ -48,6 +50,7 @@ import org.springframework.security.saml.processor.SAMLBinding;
 import org.springframework.security.saml.processor.SAMLProcessorImpl;
 import org.springframework.security.saml.trust.httpclient.TLSProtocolConfigurer;
 import org.springframework.security.saml.trust.httpclient.TLSProtocolSocketFactory;
+import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.security.saml.websso.ArtifactResolutionProfileImpl;
 import org.springframework.security.saml.websso.SingleLogoutProfile;
@@ -63,6 +66,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -114,7 +118,8 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
     // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
     protected final HttpSecurity samlizedConfig(final HttpSecurity http) throws Exception {
-        http.httpBasic().authenticationEntryPoint(samlEntryPoint())
+        return http
+                .httpBasic().authenticationEntryPoint(samlEntryPoint())
                 .and()
                 .csrf().ignoringAntMatchers("/saml/**")
                 .and()
@@ -122,8 +127,30 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
                 .and()
                 .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
                 .addFilterAfter(filterChainProxy(), BasicAuthenticationFilter.class);
+    }
 
-        return http;
+    /**
+     * Mocks security by hardcoding a given user so that it will always appear that user is accessing the protected
+     * resources. This is useful to allow developer to bypass any web authentication against ADFS during rapid
+     * app development.
+     *
+     * @param http HttpSecurity instance
+     * @param user User instance
+     * @return HttpSecurity that will never authenticate against ADFS
+     */
+    protected final HttpSecurity mockSecurity(final HttpSecurity http, final User user) {
+        expect(user, "user").not().toBeNull().check();
+
+        if (samlConfigBean().getSamlUserDetailsService() == null) {
+            throw new SpringSecurityAdfsSaml2Exception(
+                    "`samlConfigBean.samlUserDetailsService` cannot be null. " +
+                    "When mocking security, the given user details object will be set as principal. " +
+                    "Because setting `samlConfigBean.samlUserDetailsService` will set the user details object as principal, " +
+                    "this property must be configured to ensure the mock security mimics the actual security configuration."
+            );
+        }
+
+        return http.addFilterBefore(new MockFilterSecurityInterceptor(user), FilterSecurityInterceptor.class);
     }
 
     /**
@@ -333,9 +360,18 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
-        if (samlConfigBean().getSamlUserDetailsService() != null) {
-            samlAuthenticationProvider.setUserDetails(samlConfigBean().getSamlUserDetailsService());
+        SAMLUserDetailsService samlUserDetailsService = samlConfigBean().getSamlUserDetailsService();
+
+        if (samlUserDetailsService != null) {
+            samlAuthenticationProvider.setUserDetails(samlUserDetailsService);
+
+            // By default, `principal` is always going to be `NameID` even though the `Authentication` object
+            // contain `userDetails` object. So, if `userDetails` is provided, then don't force `principal` as
+            // string so that `principal` represents `userDetails` object.
+            // See: http://stackoverflow.com/questions/33786861/how-to-override-the-nameid-value-in-samlauthenticationprovider
+            samlAuthenticationProvider.setForcePrincipalAsString(false);
         }
+
         return samlAuthenticationProvider;
     }
 
