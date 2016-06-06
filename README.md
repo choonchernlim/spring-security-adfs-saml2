@@ -104,7 +104,7 @@ protected void configure(final HttpSecurity http) throws Exception {
 
     mockSecurity(http, currentUser)
                .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated();
+               .anyRequest().authenticated();
 }
 ```
 
