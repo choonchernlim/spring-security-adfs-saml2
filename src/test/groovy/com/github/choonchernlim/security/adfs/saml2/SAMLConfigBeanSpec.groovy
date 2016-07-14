@@ -34,6 +34,7 @@ class SAMLConfigBeanSpec extends Specification {
             setSuccessLoginDefaultUrl('successLoginDefaultUrl').
             setSuccessLogoutUrl('successLogoutUrl').
             setFailedLoginDefaultUrl('failedLoginDefaultUrl').
+            setStoreCsrfTokenInCookie(true).
             setSamlUserDetailsService(samlUserDetailsService).
             setAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
 
@@ -53,6 +54,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.successLoginDefaultUrl == 'successLoginDefaultUrl'
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == 'failedLoginDefaultUrl'
+        bean.storeCsrfTokenInCookie
         bean.samlUserDetailsService == samlUserDetailsService
         bean.authnContexts == [CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set
     }
@@ -65,6 +67,7 @@ class SAMLConfigBeanSpec extends Specification {
                 setFailedLoginDefaultUrl(null).
                 setSamlUserDetailsService(null).
                 setAuthnContexts(null).
+                setStoreCsrfTokenInCookie(null).
                 createSAMLConfigBean()
 
         then:
@@ -79,6 +82,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.successLoginDefaultUrl == 'successLoginDefaultUrl'
         bean.successLogoutUrl == 'successLogoutUrl'
         bean.failedLoginDefaultUrl == ''
+        !bean.storeCsrfTokenInCookie
         bean.samlUserDetailsService == null
         bean.authnContexts == [AuthnContext.PASSWORD_AUTHN_CTX] as Set
     }

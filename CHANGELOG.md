@@ -1,5 +1,25 @@
 # Change Log
 
+## 0.5.0 - 2016-07-13
+
+* If `samlConfigBean.storeCsrfTokenInCookie` is `true`, then store CSRF token in cookie.
+* Decoupled `WebSSOProfileOptions` from `SAMLEntryPoint` to allow user to override `SAMLEntryPoint` easily.
+* Dependency updates.
+
+```                  
+[INFO]   cglib:cglib-nodep ..................................... 3.2.2 -> 3.2.4
+[INFO]   org.codehaus.groovy:groovy-all ........................ 2.4.6 -> 2.4.7
+[INFO]   org.spockframework:spock-core ...
+[INFO]                                    1.0-groovy-2.4 -> 1.1-groovy-2.4-rc-1
+[INFO]   org.springframework:spring-test ....... 4.2.6.RELEASE -> 4.3.1.RELEASE
+[INFO]   org.springframework.security:spring-security-config ...
+[INFO]                                           4.1.0.RELEASE -> 4.1.1.RELEASE
+[INFO]   org.springframework.security:spring-security-core ...
+[INFO]                                           4.1.0.RELEASE -> 4.1.1.RELEASE
+[INFO]   org.springframework.security:spring-security-web ...
+[INFO]                                           4.1.0.RELEASE -> 4.1.1.RELEASE
+```                  
+
 ## 0.4.0 - 2016-06-05
 
 * If `samlConfigBean.samlUserDetailsService` is provided, then set `samlAuthenticationProvider.forcePrincipalAsString` to `false` so that `principal` represents the `userDetails` object.

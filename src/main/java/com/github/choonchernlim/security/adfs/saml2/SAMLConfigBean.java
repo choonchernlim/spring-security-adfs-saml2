@@ -1,6 +1,7 @@
 package com.github.choonchernlim.security.adfs.saml2;
 
 import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import org.opensaml.saml2.core.AuthnContext;
@@ -85,6 +86,13 @@ public final class SAMLConfigBean {
     private final SAMLUserDetailsService samlUserDetailsService;
 
     /**
+     * Whether to store CSRF token in cookie.
+     * </p>
+     * Default is false.
+     */
+    private final Boolean storeCsrfTokenInCookie;
+
+    /**
      * Determine what authentication methods to use.
      * <p/>
      * To use the order of authentication methods defined by IdP, set as empty set.
@@ -106,6 +114,7 @@ public final class SAMLConfigBean {
                    final String successLoginDefaultUrl,
                    final String successLogoutUrl,
                    final String failedLoginDefaultUrl,
+                   final Boolean storeCsrfTokenInCookie,
                    final SAMLUserDetailsService samlUserDetailsService,
                    final Set<String> authnContexts) {
 
@@ -123,9 +132,9 @@ public final class SAMLConfigBean {
 
         this.successLoginDefaultUrl = expect(successLoginDefaultUrl, "Success login URL").not().toBeBlank().check();
         this.successLogoutUrl = expect(successLogoutUrl, "Success logout URL").not().toBeBlank().check();
-
         this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or("");
 
+        this.storeCsrfTokenInCookie = MoreObjects.firstNonNull(storeCsrfTokenInCookie, false);
         this.samlUserDetailsService = samlUserDetailsService;
 
         this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
@@ -174,6 +183,10 @@ public final class SAMLConfigBean {
 
     public String getFailedLoginDefaultUrl() {
         return failedLoginDefaultUrl;
+    }
+
+    public Boolean getStoreCsrfTokenInCookie() {
+        return storeCsrfTokenInCookie;
     }
 
     public SAMLUserDetailsService getSamlUserDetailsService() {

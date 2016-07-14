@@ -73,6 +73,9 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.annotation.PostConstruct;
@@ -113,13 +116,12 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      *
      * @param http HttpSecurity instance
      * @return Same HttpSecurity instance
-     * @throws Exception
+     * @throws Exception Exception
      */
     // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
     // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
     protected final HttpSecurity samlizedConfig(final HttpSecurity http) throws Exception {
-        return http
-                .httpBasic().authenticationEntryPoint(samlEntryPoint())
+        http.httpBasic().authenticationEntryPoint(samlEntryPoint())
                 .and()
                 .csrf().ignoringAntMatchers("/saml/**")
                 .and()
@@ -127,7 +129,29 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
                 .and()
                 .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
                 .addFilterAfter(filterChainProxy(), BasicAuthenticationFilter.class);
+
+        // store CSRF token in cookie
+        if (samlConfigBean().getStoreCsrfTokenInCookie()) {
+            http.csrf()
+                    .csrfTokenRepository(csrfTokenRepository())
+                    .and()
+                    .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class);
+        }
+
+        return http;
     }
+
+    /**
+     * Configure CSRF token repository to accept CSRF token from AngularJS friendly header.
+     *
+     * @return CsrfTokenRepository
+     */
+    private CsrfTokenRepository csrfTokenRepository() {
+        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+        repository.setHeaderName(CsrfHeaderFilter.HEADER_NAME);
+        return repository;
+    }
+
 
     /**
      * Mocks security by hardcoding a given user so that it will always appear that user is accessing the protected
@@ -158,7 +182,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      *
      * @param web WebSecurity instance
      * @return Same WebSecurity instance
-     * @throws Exception
+     * @throws Exception Exception
      */
     protected final WebSecurity samlizedConfig(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers(samlConfigBean().getSuccessLogoutUrl());
@@ -174,6 +198,18 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Entry point to initialize authentication
     @Bean
     public SAMLEntryPoint samlEntryPoint() {
+        SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
+        samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions());
+        return samlEntryPoint;
+    }
+
+    /**
+     * Customizing SAML request message to be sent to the IDP.
+     *
+     * @return WebSSOProfileOptions
+     */
+    @Bean
+    public WebSSOProfileOptions webSSOProfileOptions() {
         WebSSOProfileOptions webSSOProfileOptions = new WebSSOProfileOptions();
 
         // Disable element scoping when sending requests to IdP to prevent
@@ -195,10 +231,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
             webSSOProfileOptions.setAuthnContexts(samlConfigBean().getAuthnContexts());
         }
 
-        SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
-        samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);
-
-        return samlEntryPoint;
+        return webSSOProfileOptions;
     }
 
     // Filter automatically generates default SP metadata
