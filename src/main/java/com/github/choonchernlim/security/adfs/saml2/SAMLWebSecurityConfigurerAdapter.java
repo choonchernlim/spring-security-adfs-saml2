@@ -116,7 +116,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      *
      * @param http HttpSecurity instance
      * @return Same HttpSecurity instance
-     * @throws Exception
+     * @throws Exception Exception
      */
     // CSRF must be disabled when processing /saml/** to prevent "Expected CSRF token not found" exception.
     // See: http://stackoverflow.com/questions/26508835/spring-saml-extension-and-spring-security-csrf-protection-conflict/26560447
@@ -182,7 +182,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
      *
      * @param web WebSecurity instance
      * @return Same WebSecurity instance
-     * @throws Exception
+     * @throws Exception Exception
      */
     protected final WebSecurity samlizedConfig(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers(samlConfigBean().getSuccessLogoutUrl());
@@ -198,6 +198,18 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Entry point to initialize authentication
     @Bean
     public SAMLEntryPoint samlEntryPoint() {
+        SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
+        samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions());
+        return samlEntryPoint;
+    }
+
+    /**
+     * Customizing SAML request message to be sent to the IDP.
+     *
+     * @return WebSSOProfileOptions
+     */
+    @Bean
+    public WebSSOProfileOptions webSSOProfileOptions() {
         WebSSOProfileOptions webSSOProfileOptions = new WebSSOProfileOptions();
 
         // Disable element scoping when sending requests to IdP to prevent
@@ -219,10 +231,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
             webSSOProfileOptions.setAuthnContexts(samlConfigBean().getAuthnContexts());
         }
 
-        SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
-        samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);
-
-        return samlEntryPoint;
+        return webSSOProfileOptions;
     }
 
     // Filter automatically generates default SP metadata
