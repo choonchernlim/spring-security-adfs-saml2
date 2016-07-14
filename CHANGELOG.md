@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.5.0 - 2016-06-05
+## 0.5.0 - 2016-07-13
 
 * If `samlConfigBean.storeCsrfTokenInCookie` is `true`, then store CSRF token in cookie.
 * Decoupled `WebSSOProfileOptions` from `SAMLEntryPoint` to allow user to override `SAMLEntryPoint` easily.
