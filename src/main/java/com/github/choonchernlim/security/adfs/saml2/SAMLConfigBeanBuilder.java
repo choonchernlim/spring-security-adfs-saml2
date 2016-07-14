@@ -20,6 +20,7 @@ public final class SAMLConfigBeanBuilder {
     private String successLoginDefaultUrl;
     private String successLogoutUrl;
     private String failedLoginDefaultUrl;
+    private Boolean storeCsrfTokenInCookie;
     private SAMLUserDetailsService samlUserDetailsService;
     private Set<String> authnContexts;
 
@@ -78,6 +79,11 @@ public final class SAMLConfigBeanBuilder {
         return this;
     }
 
+    public SAMLConfigBeanBuilder setStoreCsrfTokenInCookie(final Boolean storeCsrfTokenInCookie) {
+        this.storeCsrfTokenInCookie = storeCsrfTokenInCookie;
+        return this;
+    }
+
     public SAMLConfigBeanBuilder setSamlUserDetailsService(final SAMLUserDetailsService samlUserDetailsService) {
         this.samlUserDetailsService = samlUserDetailsService;
         return this;
@@ -100,6 +106,7 @@ public final class SAMLConfigBeanBuilder {
                                   successLoginDefaultUrl,
                                   successLogoutUrl,
                                   failedLoginDefaultUrl,
+                                  storeCsrfTokenInCookie,
                                   samlUserDetailsService,
                                   authnContexts);
     }

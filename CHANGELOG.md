@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.5.0 - 2016-06-05
+
+* If `samlConfigBean.storeCsrfTokenInCookie` is `true`, then store CSRF token in cookie.
+
 ## 0.4.0 - 2016-06-05
 
 * If `samlConfigBean.samlUserDetailsService` is provided, then set `samlAuthenticationProvider.forcePrincipalAsString` to `false` so that `principal` represents the `userDetails` object.

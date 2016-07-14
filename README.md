@@ -26,7 +26,7 @@ Tested against IdP's environments:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
@@ -63,6 +63,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
                 .setKeystorePrivateKeyPassword("keypass")
                 .setSuccessLoginDefaultUrl("/")
                 .setSuccessLogoutUrl("/goodbye")
+                .setStoreCsrfTokenInCookie(true)
                 .createSAMLConfigBean();
     }
 
@@ -125,6 +126,7 @@ protected void configure(final HttpSecurity http) throws Exception {
 |successLoginDefaultUrl     |Yes       |Where to redirect user on successful login if no saved request is found in the session.                   |
 |successLogoutUrl           |Yes       |Where to redirect user on successful logout.                                                              |
 |failedLoginDefaultUrl      |No        |Where to redirect user on failed login. This value is set to null, which returns 401 error code on failed login. But, in theory, this will never be used because IdP will handled the failed login on IdP login page.<br/><br/>Default is `''`, which return 401 error code.|
+|storeCsrfTokenInCookie     |No        |Whether to store CSRF token in cookie named `XSRF-TOKEN` and expecting CSRF token to be set using header named `X-XSRF-TOKEN` to cater single-page app using frameworks like React and AngularJS. <br/><br/>Default is `false`.             |
 |samlUserDetailsService     |No        |For configuring user details and authorities. When set, `userDetails` will be set as `principal`.<br/><br/>Default is `null`. |
 |authnContexts              |No        |Determine what authentication methods to use. To use the order of authentication methods defined by IdP, set as empty set. To enable Windows Integrated Auth (WIA), use `CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX`.<br/><br/>Default is `AuthnContext.PASSWORD_AUTHN_CTX` where IdP login page is displayed to obtain user/password.|
 
