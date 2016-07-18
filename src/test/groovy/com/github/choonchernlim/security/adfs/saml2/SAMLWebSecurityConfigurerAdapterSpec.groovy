@@ -28,29 +28,29 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
     }
 
     def allFieldsBeanBuilder = new SAMLConfigBeanBuilder().
-            setIdpServerName('idpServerName').
-            setSpServerName('spServerName').
-            setSpHttpsPort(8443).
-            setSpContextPath('spContextPath').
-            setKeystoreResource(keystoreResource).
-            setKeystoreAlias(ALIAS).
-            setKeystorePassword(STOREPASS).
-            setKeystorePrivateKeyPassword(KEYPASS).
-            setSuccessLoginDefaultUrl('successLoginDefaultUrl').
-            setSuccessLogoutUrl('successLogoutUrl').
-            setFailedLoginDefaultUrl('failedLoginDefaultUrl').
-            setSamlUserDetailsService(samlUserDetailsService).
-            setAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
+            withIdpServerName('idpServerName').
+            withSpServerName('spServerName').
+            withSpHttpsPort(8443).
+            withSpContextPath('spContextPath').
+            withKeystoreResource(keystoreResource).
+            withKeystoreAlias(ALIAS).
+            withKeystorePassword(STOREPASS).
+            withKeystorePrivateKeyPassword(KEYPASS).
+            withSuccessLoginDefaultUrl('successLoginDefaultUrl').
+            withSuccessLogoutUrl('successLogoutUrl').
+            withFailedLoginDefaultUrl('failedLoginDefaultUrl').
+            withSamlUserDetailsService(samlUserDetailsService).
+            withAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
 
     @Unroll
     @SuppressWarnings("all")
     def "metadataGeneratorFilter - entityBaseURL - #expectedValue"() {
         given:
         def samlConfigBean = allFieldsBeanBuilder.
-                setSpServerName(server).
-                setSpHttpsPort(port).
-                setSpContextPath(contextPath).
-                createSAMLConfigBean()
+                withSpServerName(server).
+                withSpHttpsPort(port).
+                withSpContextPath(contextPath).
+                build()
 
         when:
         def adapter = new SAMLWebSecurityConfigurerAdapter() {
@@ -77,10 +77,10 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
     def "contextProvider - #expectedValue"() {
         given:
         def samlConfigBean = allFieldsBeanBuilder.
-                setSpServerName(aServer).
-                setSpHttpsPort(aPort).
-                setSpContextPath(aContextPath).
-                createSAMLConfigBean()
+                withSpServerName(aServer).
+                withSpHttpsPort(aPort).
+                withSpContextPath(aContextPath).
+                build()
 
         when:
         def adapter = new SAMLWebSecurityConfigurerAdapter() {
@@ -118,8 +118,8 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
             @Override
             protected SAMLConfigBean samlConfigBean() {
                 return allFieldsBeanBuilder.
-                        setSamlUserDetailsService(userDetailsService).
-                        createSAMLConfigBean()
+                        withSamlUserDetailsService(userDetailsService).
+                        build()
             }
         }
 
@@ -139,7 +139,7 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         def adapter = new SAMLWebSecurityConfigurerAdapter() {
             @Override
             protected SAMLConfigBean samlConfigBean() {
-                return allFieldsBeanBuilder.createSAMLConfigBean()
+                return allFieldsBeanBuilder.build()
             }
         }
 
@@ -157,7 +157,7 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         def adapter = new SAMLWebSecurityConfigurerAdapter() {
             @Override
             protected SAMLConfigBean samlConfigBean() {
-                return allFieldsBeanBuilder.setSamlUserDetailsService(null).createSAMLConfigBean()
+                return allFieldsBeanBuilder.withSamlUserDetailsService(null).build()
             }
         }
 
@@ -175,7 +175,7 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         def adapter = new SAMLWebSecurityConfigurerAdapter() {
             @Override
             protected SAMLConfigBean samlConfigBean() {
-                return allFieldsBeanBuilder.createSAMLConfigBean()
+                return allFieldsBeanBuilder.build()
             }
         }
 

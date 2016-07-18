@@ -4,6 +4,7 @@ import static com.github.choonchernlim.betterPreconditions.preconditions.Precond
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
+import net.karneim.pojobuilder.GeneratePojoBuilder;
 import org.opensaml.saml2.core.AuthnContext;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
@@ -103,6 +104,7 @@ public final class SAMLConfigBean {
      */
     private final Set<String> authnContexts;
 
+    @GeneratePojoBuilder
     SAMLConfigBean(final String idpServerName,
                    final String spServerName,
                    final Integer spHttpsPort,

@@ -23,24 +23,24 @@ class SAMLConfigBeanSpec extends Specification {
         }
     }
     def allFieldsBeanBuilder = new SAMLConfigBeanBuilder().
-            setIdpServerName('idpServerName').
-            setSpServerName('spServerName').
-            setSpHttpsPort(8443).
-            setSpContextPath('spContextPath').
-            setKeystoreResource(keystoreResource).
-            setKeystoreAlias('keystoreAlias').
-            setKeystorePassword('keystorePassword').
-            setKeystorePrivateKeyPassword('keystorePrivateKeyPassword').
-            setSuccessLoginDefaultUrl('successLoginDefaultUrl').
-            setSuccessLogoutUrl('successLogoutUrl').
-            setFailedLoginDefaultUrl('failedLoginDefaultUrl').
-            setStoreCsrfTokenInCookie(true).
-            setSamlUserDetailsService(samlUserDetailsService).
-            setAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
+            withIdpServerName('idpServerName').
+            withSpServerName('spServerName').
+            withSpHttpsPort(8443).
+            withSpContextPath('spContextPath').
+            withKeystoreResource(keystoreResource).
+            withKeystoreAlias('keystoreAlias').
+            withKeystorePassword('keystorePassword').
+            withKeystorePrivateKeyPassword('keystorePrivateKeyPassword').
+            withSuccessLoginDefaultUrl('successLoginDefaultUrl').
+            withSuccessLogoutUrl('successLogoutUrl').
+            withFailedLoginDefaultUrl('failedLoginDefaultUrl').
+            withStoreCsrfTokenInCookie(true).
+            withSamlUserDetailsService(samlUserDetailsService).
+            withAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
 
     def "required and optional fields"() {
         when:
-        def bean = allFieldsBeanBuilder.createSAMLConfigBean()
+        def bean = allFieldsBeanBuilder.build()
 
         then:
         bean.idpServerName == 'idpServerName'
@@ -62,13 +62,13 @@ class SAMLConfigBeanSpec extends Specification {
     def "only required fields"() {
         when:
         def bean = allFieldsBeanBuilder.
-                setSpHttpsPort(null).
-                setSpContextPath(null).
-                setFailedLoginDefaultUrl(null).
-                setSamlUserDetailsService(null).
-                setAuthnContexts(null).
-                setStoreCsrfTokenInCookie(null).
-                createSAMLConfigBean()
+                withSpHttpsPort(null).
+                withSpContextPath(null).
+                withFailedLoginDefaultUrl(null).
+                withSamlUserDetailsService(null).
+                withAuthnContexts(null).
+                withStoreCsrfTokenInCookie(null).
+                build()
 
         then:
         bean.idpServerName == 'idpServerName'
@@ -90,8 +90,8 @@ class SAMLConfigBeanSpec extends Specification {
     def "authnContexts - empty set is fine"() {
         when:
         def bean = allFieldsBeanBuilder.
-                setAuthnContexts([] as Set).
-                createSAMLConfigBean()
+                withAuthnContexts([] as Set).
+                build()
 
         then:
         bean.authnContexts == [] as Set
@@ -100,7 +100,7 @@ class SAMLConfigBeanSpec extends Specification {
     @Unroll
     def "missing required field - #field"() {
         when:
-        allFieldsBeanBuilder."set$field"(null).createSAMLConfigBean()
+        allFieldsBeanBuilder."with$field"(null).build()
 
         then:
         thrown expectedException
