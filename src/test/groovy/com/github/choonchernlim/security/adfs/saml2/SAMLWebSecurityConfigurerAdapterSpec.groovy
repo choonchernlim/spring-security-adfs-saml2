@@ -14,11 +14,10 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
-    private static final String ALIAS = 'test-alias'
+    private static final String ALIAS = 'test'
     private static final String STOREPASS = 'test-storepass'
     private static final String KEYPASS = 'test-keypass'
 
-    // keytool -genkeypair -keystore test.jks -storepass test-storepass -alias test-alias -keypass test-keypass -dname cn=test -keyalg RSA -keysize 2048 -sigalg SHA256withRSA
     def keystoreResource = new DefaultResourceLoader().getResource("classpath:test.jks")
 
     static def samlUserDetailsService = new SAMLUserDetailsService() {

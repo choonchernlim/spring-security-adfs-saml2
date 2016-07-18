@@ -8,4 +8,8 @@ public final class SpringSecurityAdfsSaml2Exception extends RuntimeException {
     SpringSecurityAdfsSaml2Exception(final String message) {
         super(message);
     }
+
+    SpringSecurityAdfsSaml2Exception(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
