@@ -57,7 +57,7 @@ public class JndiBackedKeystoreService {
     private Iterator<String> getJndiValues() {
         final String jndiValue;
         try {
-            jndiValue = jndiTemplate.lookup("java:comp/env/" + jndiName, String.class);
+            jndiValue = jndiTemplate.lookup(jndiName, String.class);
         }
         catch (Exception e) {
             throw new SpringSecurityAdfsSaml2Exception(String.format("Unable to get value from JNDI: %s", jndiName), e);
