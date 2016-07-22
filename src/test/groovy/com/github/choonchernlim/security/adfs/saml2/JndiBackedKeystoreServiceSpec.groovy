@@ -8,12 +8,11 @@ import spock.lang.Unroll
 class JndiBackedKeystoreServiceSpec extends Specification {
 
     def jndiName = 'jks/idm'
-    def jndiLookupValue = "java:comp/env/${jndiName}"
 
     def "given invalid jndi name, should throw exception"() {
         given:
         def service = new JndiBackedKeystoreService('jks/invalid')
-        service.setJndiTemplate(new ExpectedLookupTemplate(jndiLookupValue, 'bla'))
+        service.setJndiTemplate(new ExpectedLookupTemplate(jndiName, 'bla'))
 
         when:
         service.get()
@@ -26,7 +25,7 @@ class JndiBackedKeystoreServiceSpec extends Specification {
     def "given invalid jndi value ( #jndiValue ), should throw exception"() {
         given:
         def service = new JndiBackedKeystoreService(jndiName)
-        service.setJndiTemplate(new ExpectedLookupTemplate(jndiLookupValue, jndiValue))
+        service.setJndiTemplate(new ExpectedLookupTemplate(jndiName, jndiValue))
 
         when:
         service.get()
@@ -48,7 +47,7 @@ class JndiBackedKeystoreServiceSpec extends Specification {
         given:
         def service = new JndiBackedKeystoreService(jndiName)
         def jndiValue = 'classpath:test.jks,test,test-storepass,test-keypass'
-        service.setJndiTemplate(new ExpectedLookupTemplate(jndiLookupValue, jndiValue))
+        service.setJndiTemplate(new ExpectedLookupTemplate(jndiName, jndiValue))
 
         when:
         def bean = service.get()
