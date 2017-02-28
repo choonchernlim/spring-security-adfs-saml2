@@ -26,7 +26,7 @@ Tested against IdP's environments:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
@@ -54,17 +54,17 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
     @Override
     protected SAMLConfigBean samlConfigBean() {
         return new SAMLConfigBeanBuilder()
-                .setIdpServerName("idp-server")
-                .setSpServerName("sp-server")
-                .setSpContextPath("/app")
-                .setKeystoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
-                .setKeystorePassword("storepass")
-                .setKeystoreAlias("alias")
-                .setKeystorePrivateKeyPassword("keypass")
-                .setSuccessLoginDefaultUrl("/")
-                .setSuccessLogoutUrl("/goodbye")
-                .setStoreCsrfTokenInCookie(true)
-                .createSAMLConfigBean();
+                .withIdpServerName("idp-server")
+                .withSpServerName("sp-server")
+                .withSpContextPath("/app")
+                .withKeystoreResource(new DefaultResourceLoader().getResource("classpath:keystore.jks"))
+                .withKeystorePassword("storepass")
+                .withKeystoreAlias("alias")
+                .withKeystorePrivateKeyPassword("keypass")
+                .withSuccessLoginDefaultUrl("/")
+                .withSuccessLogoutUrl("/goodbye")
+                .withStoreCsrfTokenInCookie(true)
+                .build();
     }
 
     // This configuration is not needed if your signature algorithm is SHA256withRSA and 

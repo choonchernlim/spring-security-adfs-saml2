@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.6.0 - 2016-07-18
+
+* Helper class `JndiBackedKeystoreService` to retrieve keystore info from JNDI value with following format: `jks-path,alias,storepass,keypass`
+
 ## 0.5.0 - 2016-07-13
 
 * If `samlConfigBean.storeCsrfTokenInCookie` is `true`, then store CSRF token in cookie.

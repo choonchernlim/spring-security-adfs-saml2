@@ -1,0 +1,1 @@
+keytool -genkeypair -keystore test.jks -storepass test-storepass -alias test -keypass test-keypass -dname "CN=test" -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -validity 99999

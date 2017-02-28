@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>spring-security-adfs-saml2</artifactId>
-    <version>0.5.0</version>
+    <version>0.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Spring Security ADFS SAML2</name>
@@ -55,6 +55,12 @@
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.karneim</groupId>
+            <artifactId>pojobuilder</artifactId>
+            <version>3.4.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -174,6 +180,35 @@
                         <version>2.4.3-01</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <!--
+            When using `mkarneim/pojobuilder` (https://github.com/mkarneim/pojobuilder), the builder source files
+            are generated at `target/generated-sources/annotations`. If these source files exist and `mvn compile`
+            is issued, the following exception occurs: "The type *Builder is already defined". This forces us to
+            always do `mvn clean` to wipe out `target` first before running any command.
+            To fix this, always clean up these source files after it is compiled.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="Deleting all source files created by Pojo Builder">
+                                <delete failonerror="false">
+                                    <fileset dir="${project.build.directory}/generated-sources/annotations"
+                                             includes="**/*Builder.java"/>
+                                </delete>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
