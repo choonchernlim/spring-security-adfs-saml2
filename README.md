@@ -37,8 +37,30 @@ Tested against IdP's environments:-
 * Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
     * Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
     * IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack.
-    * To import IdP's public certificate into keystore:-
-        * `keytool -importcert -file idp-adfs-server.cer -keystore keystore.jks -alias idp-adfs-server`
+* To generate Sp's public/private keys:-
+
+```bash
+keytool -genkeypair \
+ -v \
+ -keystore /path/to/keystore.jks \
+ -storepass mystorepass \
+ -alias myapp \
+ -dname 'CN=[COMMON-NAME], OU=[ORGANIZATION-UNIT], O=[ORGANIZATION-NAME], L=[CITY-NAME], ST=[STATE-NAME], C=[2-LETTER-COUNTY-CODE]' \
+ -keypass mykeypass \
+ -keyalg RSA \
+ -keysize 2048 \
+ -sigalg SHA256withRSA
+```
+
+* To import IdP's public certificate into keystore:-
+
+```bash
+keytool -importcert \
+  -file idp-adfs-server.crt \
+  -keystore /path/to/keystore.jks \
+  -alias idp-adfs-server \
+  -storepass mystorepass
+```
 
 ## Usage 
 
