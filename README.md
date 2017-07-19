@@ -39,13 +39,13 @@ Tested against IdP's environments:-
     * IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack.
 * To generate Sp's public/private keys:-
 
-```bash
+```
 keytool -genkeypair \
  -v \
  -keystore /path/to/keystore.jks \
  -storepass mystorepass \
  -alias myapp \
- -dname 'CN=[COMMON-NAME], OU=[ORGANIZATION-UNIT], O=[ORGANIZATION-NAME], L=[CITY-NAME], ST=[STATE-NAME], C=[2-LETTER-COUNTY-CODE]' \
+ -dname 'CN=[COMMON-NAME], OU=[ORGANIZATION-UNIT], O=[ORGANIZATION-NAME], L=[CITY-NAME], ST=[STATE-NAME], C=[COUNTRY]' \
  -keypass mykeypass \
  -keyalg RSA \
  -keysize 2048 \
@@ -54,7 +54,7 @@ keytool -genkeypair \
 
 * To import IdP's public certificate into keystore:-
 
-```bash
+```
 keytool -importcert \
   -file idp-adfs-server.crt \
   -keystore /path/to/keystore.jks \
