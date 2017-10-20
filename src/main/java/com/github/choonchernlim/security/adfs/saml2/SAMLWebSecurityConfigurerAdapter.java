@@ -86,15 +86,11 @@ import java.util.Timer;
  * This class should be extended by Sp's Java-based Spring configuration for web security.
  */
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
     /**
      * Provides an opportunity for child class to access Spring environment, if needed.
      */
     @Autowired
     protected Environment env;
-
-    @Autowired
-    private SAMLAuthenticationProvider samlAuthenticationProvider;
 
     // Initialization of OpenSAML library, must be static to prevent "ObjectPostProcessor is a required bean" exception
     // By default, Spring Security SAML uses SHA-1. So, use `DefaultSAMLBootstrap` to use SHA-256.
