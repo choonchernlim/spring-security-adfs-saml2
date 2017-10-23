@@ -92,6 +92,8 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     @Autowired
     protected Environment env;
 
+    private SAMLAuthenticationProvider cachedSamlAuthenticationProvider;
+
     // Initialization of OpenSAML library, must be static to prevent "ObjectPostProcessor is a required bean" exception
     // By default, Spring Security SAML uses SHA-1. So, use `DefaultSAMLBootstrap` to use SHA-256.
     @Bean
@@ -311,7 +313,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Register authentication manager for SAML provider
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(samlAuthenticationProvider);
+        auth.authenticationProvider(samlAuthenticationProvider());
     }
 
     // Logger for SAML messages and events
@@ -388,6 +390,9 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // SAML Authentication Provider responsible for validating of received SAML messages
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
+        if (cachedSamlAuthenticationProvider != null) {
+            return cachedSamlAuthenticationProvider;
+        }
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
         SAMLUserDetailsService samlUserDetailsService = samlConfigBean().getSamlUserDetailsService();
 
@@ -401,6 +406,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
             samlAuthenticationProvider.setForcePrincipalAsString(false);
         }
 
+        cachedSamlAuthenticationProvider = samlAuthenticationProvider;
         return samlAuthenticationProvider;
     }
 
