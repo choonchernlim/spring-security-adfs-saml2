@@ -86,15 +86,13 @@ import java.util.Timer;
  * This class should be extended by Sp's Java-based Spring configuration for web security.
  */
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
     /**
      * Provides an opportunity for child class to access Spring environment, if needed.
      */
     @Autowired
     protected Environment env;
 
-    @Autowired
-    private SAMLAuthenticationProvider samlAuthenticationProvider;
+    private SAMLAuthenticationProvider cachedSamlAuthenticationProvider;
 
     // Initialization of OpenSAML library, must be static to prevent "ObjectPostProcessor is a required bean" exception
     // By default, Spring Security SAML uses SHA-1. So, use `DefaultSAMLBootstrap` to use SHA-256.
@@ -315,7 +313,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Register authentication manager for SAML provider
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(samlAuthenticationProvider);
+        auth.authenticationProvider(samlAuthenticationProvider());
     }
 
     // Logger for SAML messages and events
@@ -392,6 +390,9 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // SAML Authentication Provider responsible for validating of received SAML messages
     @Bean
     public SAMLAuthenticationProvider samlAuthenticationProvider() {
+        if (cachedSamlAuthenticationProvider != null) {
+            return cachedSamlAuthenticationProvider;
+        }
         SAMLAuthenticationProvider samlAuthenticationProvider = new SAMLAuthenticationProvider();
         SAMLUserDetailsService samlUserDetailsService = samlConfigBean().getSamlUserDetailsService();
 
@@ -405,6 +406,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
             samlAuthenticationProvider.setForcePrincipalAsString(false);
         }
 
+        cachedSamlAuthenticationProvider = samlAuthenticationProvider;
         return samlAuthenticationProvider;
     }
 

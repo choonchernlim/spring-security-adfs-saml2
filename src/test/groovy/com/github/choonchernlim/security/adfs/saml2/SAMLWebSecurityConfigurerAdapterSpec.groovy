@@ -132,6 +132,27 @@ class SAMLWebSecurityConfigurerAdapterSpec extends Specification {
         samlUserDetailsService       | false
     }
 
+    def "authenticationProvider caches the result, returns same one on multiple calls"() {
+        given:
+        SAMLUserDetailsService userDetailsService = samlUserDetailsService
+
+        when:
+        def adapter = new SAMLWebSecurityConfigurerAdapter() {
+            @Override
+            protected SAMLConfigBean samlConfigBean() {
+                return allFieldsBeanBuilder.
+                        withSamlUserDetailsService(userDetailsService).
+                        build()
+            }
+        }
+
+        def provider1 = adapter.samlAuthenticationProvider()
+        def provider2 = adapter.samlAuthenticationProvider()
+
+        then:
+        provider1 == provider2
+    }
+
     def "mockSecurity - given null user, should throw exception"() {
         given:
         def http = new HttpSecurity(Mock(ObjectPostProcessor), Mock(AuthenticationManagerBuilder), [:] as Map)
