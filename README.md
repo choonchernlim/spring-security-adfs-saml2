@@ -26,7 +26,7 @@ Tested against IdP's environments:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
@@ -64,7 +64,9 @@ keytool -importcert \
 
 ## Usage 
 
-### Configuration Example 
+### Configuring Security by Hardcoding SAML Config 
+
+If you are configuring for one IDP server, the easiest approach is to hardcode all the SAML config in the `@Configuration` file.
 
 ```java
 // Create a Java-based Spring configuration that extends SAMLWebSecurityConfigurerAdapter.
@@ -117,7 +119,82 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 }
 ```
 
-### Mocking Security by Harcdoding a Given User for Rapid App Development
+### Configuring Security Using Environment Properties
+
+If you don't want to use `@Profile` to configure environment-specific security, you may pass the configuration values through environment properties.
+
+To prevent lifecycle loading or circular dependency issues, instead of autowiring `Environment` into the concrete class, use the given autowired `applicationContext` to get hold of the Spring bean.
+
+```java
+@Configuration
+@EnableWebSecurity
+class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
+
+    @Override
+    protected SAMLConfigBean samlConfigBean() {
+        final Environment env = applicationContext.getBean(Environment.class);
+        
+        return new SAMLConfigBeanBuilder()
+                .withIdpServerName(env.getProperty("idpServerName"))
+                .withSpServerName(env.getProperty("spServerName"))
+                .withSpContextPath(env.getProperty("spContextPath"))
+                .withKeystoreResource(new DefaultResourceLoader().getResource(env.getProperty("keystoreResource")))
+                .withKeystorePassword(env.getProperty("keystorePassword"))
+                .withKeystoreAlias(env.getProperty("keystoreAlias"))
+                .withKeystorePrivateKeyPassword(env.getProperty("keystorePrivateKeyPassword"))
+                .withSuccessLoginDefaultUrl(env.getProperty("successLoginDefaultUrl"))
+                .withSuccessLogoutUrl(env.getProperty("successLogoutUrl"))
+                .withStoreCsrfTokenInCookie(env.getProperty("storeCsrfTokenInCookie"))
+                .build();
+    }
+
+    ...
+}
+```
+
+### Configuring Security Using Database
+
+You may also configure `SAMLConfigBean` by retrieving the configuration values from database.
+
+Let's assume you have the following Spring JPA repository:-
+
+```java
+public interface SecurityConfigRepository extends JpaRepository<SecurityConfigEntity, Long> {
+    SecurityConfigEntity findByEnvironment(String environment);
+}
+```
+
+To prevent lifecycle loading or circular dependency issues, instead of autowiring `SecurityConfigRepository` into the concrete class, use the given autowired `applicationContext` to get hold of the Spring repository bean.
+
+```java
+@Configuration
+@EnableWebSecurity
+class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
+
+    @Override
+    protected SAMLConfigBean samlConfigBean() {
+        final SecurityConfigRepository repository = applicationContext.getBean(SecurityConfigRepository.class);
+        final SecurityConfigEntity entity = repository.findByEnvironment("dev");
+        
+        return new SAMLConfigBeanBuilder()
+                .withIdpServerName(entity.getIdpServerName())
+                .withSpServerName(entity.getSpServerName())
+                .withSpContextPath(entity.getSpContextPath())
+                .withKeystoreResource(new DefaultResourceLoader().getResource(entity.getKeystoreResource()))
+                .withKeystorePassword(entity.getKeystorePassword())
+                .withKeystoreAlias(entity.getKeystoreAlias())
+                .withKeystorePrivateKeyPassword(entity.getKeystorePrivateKeyPassword())
+                .withSuccessLoginDefaultUrl(entity.getSuccessLoginDefaultUrl())
+                .withSuccessLogoutUrl(entity.getSuccessLogoutUrl())
+                .withStoreCsrfTokenInCookie(entity.getStoreCsrfTokenInCookie())
+                .build();
+    }
+
+    ...
+}
+```
+
+### Mocking Security by Hardcoding a Given User for Rapid App Development
 
 ```java
 @Override

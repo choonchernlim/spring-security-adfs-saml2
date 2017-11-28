@@ -15,8 +15,8 @@ import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -78,7 +78,6 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.annotation.PostConstruct;
 import java.util.Timer;
 
 /**
@@ -88,10 +87,10 @@ import java.util.Timer;
 public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     /**
-     * Provides an opportunity for child class to access Spring environment, if needed.
+     * Provides an opportunity for child class to access any Spring beans, if needed.
      */
     @Autowired
-    protected Environment env;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     private SAMLAuthenticationProvider samlAuthenticationProvider;
@@ -365,7 +364,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     }
 
     // Configure TLSProtocolConfigurer
-    @PostConstruct
+    @Bean
     public MethodInvokingFactoryBean socketFactoryInitialization() {
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
         methodInvokingFactoryBean.setTargetClass(Protocol.class);
