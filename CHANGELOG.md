@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.7.0 - 2017-11-28
+
+* Dropped autowired `Environment` from `SAMLWebSecurityConfigurerAdapter` and replaced with `ApplicationContext` to allow concrete class to access any Spring beans instead of just `Environment` to configure the security. This will also prevent any lifecycle or circular dependency problems when trying to autowire beans in concrete class.
+* Replaced `@PostContruct` with `@Bean` for `SAMLWebSecurityConfigurerAdapter.socketFactoryInitialization()`.
+
 ## 0.6.0 - 2016-07-18
 
 * Helper class `JndiBackedKeystoreService` to retrieve keystore info from JNDI value with following format: `jks-path,alias,storepass,keypass`
