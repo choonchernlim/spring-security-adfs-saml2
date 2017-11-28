@@ -64,7 +64,7 @@ keytool -importcert \
 
 ## Usage 
 
-### Configuring Security by Hardcoding SAML Config 
+### Simplest Configuration
 
 If you are configuring for one IDP server, the easiest approach is to hardcode all the SAML config in the `@Configuration` file.
 
@@ -119,7 +119,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 }
 ```
 
-### Configuring Security Using Environment Properties
+### Environment Properties Driven Configuration
 
 If you don't want to use `@Profile` to configure environment-specific security, you may pass the configuration values through environment properties.
 
@@ -152,7 +152,7 @@ class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
 }
 ```
 
-### Configuring Security Using Database
+### Database Driven Configuration
 
 You may also configure `SAMLConfigBean` by retrieving the configuration values from database.
 
