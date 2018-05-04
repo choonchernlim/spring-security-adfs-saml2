@@ -6,11 +6,12 @@
     <parent>
         <groupId>com.github.choonchernlim</groupId>
         <artifactId>build-reports</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.5</version>
+        <relativePath/>
     </parent>
 
     <artifactId>spring-security-adfs-saml2</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
     <packaging>jar</packaging>
 
     <name>Spring Security ADFS SAML2</name>

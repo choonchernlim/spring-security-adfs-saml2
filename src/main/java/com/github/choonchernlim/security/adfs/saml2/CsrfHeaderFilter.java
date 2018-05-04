@@ -1,5 +1,7 @@
 package com.github.choonchernlim.security.adfs.saml2;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
@@ -41,12 +43,28 @@ final class CsrfHeaderFilter extends OncePerRequestFilter {
             final String token = csrf.getToken();
             final Cookie existingCookie = WebUtils.getCookie(request, COOKIE_NAME);
 
+            // If there's no existing cookie or the token value doesn't match, create/update it.
+            //
+            // `domain`     =   Don't need to set this so that the current request's domain will be used.
+            // `httpOnly`   =   Cannot set this value because we need JS to be able to read this cookie to get the token.
+            // `path`       =   Match app's root context so that only the app can access this cooke.
+            //                  If path is empty, set it as '/' to prevent using the resource path currently requested.
+            //                  This prevents creating too many cookies with the same name but different paths
+            //                  (due to bookmark-able links) because client side will have difficulties grabbing
+            //                  the right CSRF token value from the right cookie.
+            //                  Regarding path not set, see See https://en.wikipedia.org/wiki/HTTP_cookie#Domain_and_path
+            //
+            // `secure`     =   Cookie to only be transmitted over secure protocol as https
+            //
+            // `maxAge`     =   Expire the cookie after 8 hours. Cannot use HTTP session timeout value because this
+            //                  cookie will only get created/updated if the token value is different instead of
+            //                  every time user refreshes the session by interacting with server side.
             if (existingCookie == null || !token.equals(existingCookie.getValue())) {
-                // `path`   = while it doesn't provide any added security, set to context path to be consistent with `JSESSIONID` cookie
-                // `secure` = cookie to only be transmitted over secure protocol as https
-                // `maxAge` = expire the cookie after 8 hours
                 final Cookie cookie = new Cookie(COOKIE_NAME, token);
-                cookie.setPath(request.getContextPath());
+                final String path = MoreObjects.firstNonNull(
+                        Strings.emptyToNull(request.getServletContext().getContextPath()), "/");
+
+                cookie.setPath(path);
                 cookie.setSecure(true);
                 cookie.setMaxAge(60 * 60 * 8);
                 response.addCookie(cookie);

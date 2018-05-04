@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.7.1 - 2018-05-04
+
+* BUG - `CsrfHeaderFilter` creates multiple cookies with same name but different path due to possible empty context path, which then uses current request's path. This may cause client side to read the wrong cookie when retrieving the CSRF token.
+
 ## 0.7.0 - 2017-11-28
 
 * Dropped autowired `Environment` from `SAMLWebSecurityConfigurerAdapter` and replaced with `ApplicationContext` to allow concrete class to access any Spring beans instead of just `Environment` to configure the security. This will also prevent any lifecycle or circular dependency problems when trying to autowire beans in concrete class.

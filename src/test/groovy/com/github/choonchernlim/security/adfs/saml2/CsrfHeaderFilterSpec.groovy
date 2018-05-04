@@ -3,6 +3,7 @@ package com.github.choonchernlim.security.adfs.saml2
 import org.springframework.mock.web.MockFilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.mock.web.MockServletContext
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.security.web.csrf.DefaultCsrfToken
 import spock.lang.Specification
@@ -10,10 +11,15 @@ import spock.lang.Specification
 import javax.servlet.http.Cookie
 
 class CsrfHeaderFilterSpec extends Specification {
-    def request = new MockHttpServletRequest()
+    def servletContext = new MockServletContext(
+            contextPath: '/'
+    )
+
+    def request = new MockHttpServletRequest(servletContext)
     def response = new MockHttpServletResponse()
     def filterChain = new MockFilterChain()
     def filter = new CsrfHeaderFilter()
+
 
     def setup() {
         request.setContextPath('/app')
@@ -38,7 +44,7 @@ class CsrfHeaderFilterSpec extends Specification {
         then:
         def cookie = response.getCookie(CsrfHeaderFilter.COOKIE_NAME)
         cookie.value == 'token'
-        cookie.path == '/app'
+        cookie.path == '/'
         cookie.secure
         cookie.maxAge == 60 * 60 * 8
         !cookie.isHttpOnly()
@@ -57,7 +63,7 @@ class CsrfHeaderFilterSpec extends Specification {
         then:
         def cookie = response.getCookie(CsrfHeaderFilter.COOKIE_NAME)
         cookie.value == 'token'
-        cookie.path == '/app'
+        cookie.path == '/'
         cookie.secure
         cookie.maxAge == 60 * 60 * 8
         !cookie.isHttpOnly()
