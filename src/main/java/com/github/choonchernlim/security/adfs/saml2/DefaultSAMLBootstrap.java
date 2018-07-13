@@ -10,9 +10,9 @@ import org.springframework.security.saml.SAMLBootstrap;
 
 /**
  * By default, Spring Security SAML uses SHA1withRSA for signature algorithm and SHA-1 for digest algorithm.
- * <p></p>
+ * <p>
  * This class allows app to use stronger encryption such as SHA-256.
- * <p></p>
+ * <p>
  * See: http://stackoverflow.com/questions/23681362/how-to-change-the-signature-algorithm-of-saml-request-in-spring-security
  * See: http://stackoverflow.com/questions/25982093/setting-the-extendedmetadata-signingalgorithm-field/26004147
  */

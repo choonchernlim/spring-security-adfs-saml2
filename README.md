@@ -26,12 +26,13 @@ Tested against IdP's environments:-
 <dependency>
   <groupId>com.github.choonchernlim</groupId>
   <artifactId>spring-security-adfs-saml2</artifactId>
-  <version>0.7.1</version>
+  <version>0.8.0</version>
 </dependency>
 ```
 
 ## Prerequisites
 
+* Java 8.
 * Both Sp and IdP must use HTTPS protocol.
 * Java’s default keysize is limited to 128-bit key due to US export laws and a few countries’ import laws. So, Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files must be installed to allow larger key size, such as 256-bit key.
 * Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
@@ -251,3 +252,39 @@ Learn about my pains and lessons learned while building this module.
 * [Handling IdP’s Public Certificate When Loading Metadata Over HTTPS](http://myshittycode.com/2016/02/19/spring-security-saml-handling-idps-public-certificate-when-loading-metadata-over-https/)
 * [Configuring Binding for Sending SAML Messages to IdP](http://myshittycode.com/2016/02/18/spring-security-saml-configuring-binding-for-sending-saml-messages-to-idp/)
 * [Java + SAML: Illegal Key Size](http://myshittycode.com/2016/02/18/java-saml-illegal-key-size/)
+
+## Troubleshooting
+
+### SSL peer failed hostname validation for name: null
+
+By default, this dependency requires a keystore file that serves 2 purposes:-
+
+* Acts as a keystore, containing app's public/private key.
+* Acts as a truststore, containing IdP's certificate with public key.
+
+If the keystore does not contain IdP's certificate, the SSL verification will fail with the following error when attempting to retrieve IdP's metadata:-
+
+```
+PKIX path construction failed for untrusted credential: [subjectName='CN=idp.server.com,OU=IDP,C=US']: unable to find valid certification path to requested target
+I/O exception (javax.net.ssl.SSLPeerUnverifiedException) caught when processing request: SSL peer failed hostname validation for name: null
+Error retrieving metadata from https://idp.server.com/federationmetadata/2007-06/federationmetadata.xml
+```
+
+That said, sometimes you may want to rely on the installed JDK's truststore (ie: cacerts) to manage IdP's certificate. 
+
+To pull this off, don't create `TLSProtocolConfigurer` object by doing this:-
+
+```java
+@Configuration
+@EnableWebSecurity
+class AppSecurityConfig extends SAMLWebSecurityConfigurerAdapter {
+
+    @Bean
+    @Override
+    TLSProtocolConfigurer tlsProtocolConfigurer() {
+        return null;
+    }
+
+    ...
+}
+```

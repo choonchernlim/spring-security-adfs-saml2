@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.8.0 - 2018-07-11
+
+* Moved from Java 7 to Java 8.
+* Dependencies update... organized POM.
+
 ## 0.7.1 - 2018-05-04
 
 * BUG - `CsrfHeaderFilter` creates multiple cookies with same name but different path due to possible empty context path, which then uses current request's path. This may cause client side to read the wrong cookie when retrieving the CSRF token.
