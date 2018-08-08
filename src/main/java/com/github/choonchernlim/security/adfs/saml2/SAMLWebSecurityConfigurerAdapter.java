@@ -347,7 +347,7 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
 
     // Configure HTTP Client to accept certificates from the keystore instead of JDK keystore  for HTTPS verification
     @Bean
-    public TLSProtocolConfigurer tlsProtocolConfigurer() {
+    protected TLSProtocolConfigurer tlsProtocolConfigurer() {
         return new TLSProtocolConfigurer();
     }
 
