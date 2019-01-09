@@ -1,14 +1,13 @@
 package com.github.choonchernlim.security.adfs.saml2;
 
 import static com.github.choonchernlim.betterPreconditions.preconditions.PreconditionFactory.expect;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import net.karneim.pojobuilder.GeneratePojoBuilder;
 import org.opensaml.saml2.core.AuthnContext;
 import org.springframework.core.io.Resource;
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -104,6 +103,15 @@ public final class SAMLConfigBean {
      */
     private final Set<String> authnContexts;
 
+    /**
+     * Whether to rely on JDK's cacerts for SSL verification or not.
+     * <p/>
+     * By default, the provided keystore contains ADFS' certificate(s) to perform SSL verification.
+     * </p>
+     * Default is false.
+     */
+    private final Boolean useJdkCacertsForSslVerification;
+
     @GeneratePojoBuilder
     SAMLConfigBean(final String idpServerName,
                    final String spServerName,
@@ -118,14 +126,15 @@ public final class SAMLConfigBean {
                    final String failedLoginDefaultUrl,
                    final Boolean storeCsrfTokenInCookie,
                    final SAMLUserDetailsService samlUserDetailsService,
-                   final Set<String> authnContexts) {
+                   final Set<String> authnContexts,
+                   final Boolean useJdkCacertsForSslVerification) {
 
         //@formatter:off
         this.idpServerName = expect(idpServerName, "IdP server name").not().toBeBlank().check();
 
         this.spServerName = expect(spServerName, "Sp server name").not().toBeBlank().check();
-        this.spHttpsPort = Optional.fromNullable(spHttpsPort).or(443);
-        this.spContextPath = Optional.fromNullable(spContextPath).or("");
+        this.spHttpsPort = Optional.ofNullable(spHttpsPort).orElse(443);
+        this.spContextPath = Optional.ofNullable(spContextPath).orElse("");
 
         this.keystoreResource = (Resource) expect(keystoreResource, "Key store").not().toBeNull().check();
         this.keystoreAlias = expect(keystoreAlias, "Keystore alias").not().toBeBlank().check();
@@ -134,12 +143,13 @@ public final class SAMLConfigBean {
 
         this.successLoginDefaultUrl = expect(successLoginDefaultUrl, "Success login URL").not().toBeBlank().check();
         this.successLogoutUrl = expect(successLogoutUrl, "Success logout URL").not().toBeBlank().check();
-        this.failedLoginDefaultUrl = Optional.fromNullable(failedLoginDefaultUrl).or("");
+        this.failedLoginDefaultUrl = Optional.ofNullable(failedLoginDefaultUrl).orElse("");
 
-        this.storeCsrfTokenInCookie = MoreObjects.firstNonNull(storeCsrfTokenInCookie, false);
+        this.storeCsrfTokenInCookie = Optional.ofNullable(storeCsrfTokenInCookie).orElse( false);
         this.samlUserDetailsService = samlUserDetailsService;
 
-        this.authnContexts = Optional.fromNullable(authnContexts).or(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
+        this.authnContexts = Optional.ofNullable(authnContexts).orElse(ImmutableSet.of(AuthnContext.PASSWORD_AUTHN_CTX));
+        this.useJdkCacertsForSslVerification = Optional.ofNullable(useJdkCacertsForSslVerification).orElse(false);
         //@formatter:on
     }
 
@@ -197,5 +207,9 @@ public final class SAMLConfigBean {
 
     public Set<String> getAuthnContexts() {
         return authnContexts;
+    }
+
+    public Boolean getUseJdkCacertsForSslVerification() {
+        return useJdkCacertsForSslVerification;
     }
 }

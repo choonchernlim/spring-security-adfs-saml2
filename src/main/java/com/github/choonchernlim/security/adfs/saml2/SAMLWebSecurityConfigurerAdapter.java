@@ -345,10 +345,16 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
         return new MetadataDisplayFilter();
     }
 
-    // Configure HTTP Client to accept certificates from the keystore instead of JDK keystore  for HTTPS verification
+    // Configure HTTP Client to accept certificates from the keystore or from JDK cacerts for IDP SSL verification
     @Bean
     public TLSProtocolConfigurer tlsProtocolConfigurer() {
-        return new TLSProtocolConfigurer();
+        // To perform IDP SSL verification against app keystore file, return `TLSProtocolConfigurer`.
+        // Otherwise, return null so that it will try to find the IDP certs in JDK's cacerts.
+        //
+        // See https://stackoverflow.com/questions/28505824/spring-security-saml-https-to-another-page/28538799#28538799
+        return !samlConfigBean().getUseJdkCacertsForSslVerification() ?
+                new TLSProtocolConfigurer() :
+                null;
     }
 
     // Configure TLSProtocolConfigurer
@@ -366,10 +372,14 @@ public abstract class SAMLWebSecurityConfigurerAdapter extends WebSecurityConfig
     // Configure TLSProtocolConfigurer
     @Bean
     public MethodInvokingFactoryBean socketFactoryInitialization() {
+        // Since it is not possible to return `null`, if app needs to perform SSL verification against JDK cacerts,
+        // just set the protocol ID to anything but "http" or "https" so that it will be ignored.
+        String protocolId = !samlConfigBean().getUseJdkCacertsForSslVerification() ? "https" : "ignored";
+
         MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
         methodInvokingFactoryBean.setTargetClass(Protocol.class);
         methodInvokingFactoryBean.setTargetMethod("registerProtocol");
-        methodInvokingFactoryBean.setArguments(new Object[]{"https", protocol()});
+        methodInvokingFactoryBean.setArguments(protocolId, protocol());
         return methodInvokingFactoryBean;
     }
 

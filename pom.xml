@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>spring-security-adfs-saml2</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <name>Spring Security ADFS SAML2</name>

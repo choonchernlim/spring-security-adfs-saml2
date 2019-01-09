@@ -36,7 +36,8 @@ class SAMLConfigBeanSpec extends Specification {
             withFailedLoginDefaultUrl('failedLoginDefaultUrl').
             withStoreCsrfTokenInCookie(true).
             withSamlUserDetailsService(samlUserDetailsService).
-            withAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set)
+            withAuthnContexts([CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set).
+            withUseJdkCacertsForSslVerification(true)
 
     def "required and optional fields"() {
         when:
@@ -57,6 +58,7 @@ class SAMLConfigBeanSpec extends Specification {
         bean.storeCsrfTokenInCookie
         bean.samlUserDetailsService == samlUserDetailsService
         bean.authnContexts == [CustomAuthnContext.WINDOWS_INTEGRATED_AUTHN_CTX] as Set
+        bean.useJdkCacertsForSslVerification
     }
 
     def "only required fields"() {
@@ -68,6 +70,7 @@ class SAMLConfigBeanSpec extends Specification {
                 withSamlUserDetailsService(null).
                 withAuthnContexts(null).
                 withStoreCsrfTokenInCookie(null).
+                withUseJdkCacertsForSslVerification(null).
                 build()
 
         then:
@@ -85,6 +88,7 @@ class SAMLConfigBeanSpec extends Specification {
         !bean.storeCsrfTokenInCookie
         bean.samlUserDetailsService == null
         bean.authnContexts == [AuthnContext.PASSWORD_AUTHN_CTX] as Set
+        !bean.useJdkCacertsForSslVerification
     }
 
     def "authnContexts - empty set is fine"() {
