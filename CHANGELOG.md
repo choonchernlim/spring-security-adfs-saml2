@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.9.0 - 2019-01-09
+
+* FEATURE - Added `SAMLConfigBean.useJdkCacertsForSslVerification` flag to allow SSL verifications to be performed by using JDK's cacerts instead of app's keystore file.
+
 ## 0.8.0 - 2018-07-11
 
 * Moved from Java 7 to Java 8.

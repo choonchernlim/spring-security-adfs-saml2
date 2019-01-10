@@ -5,13 +5,13 @@
 
     <parent>
         <groupId>com.github.choonchernlim</groupId>
-        <artifactId>build-reports</artifactId>
-        <version>0.3.5</version>
+        <artifactId>spring-boot-ci</artifactId>
+        <version>0.4.0</version>
         <relativePath/>
     </parent>
 
     <artifactId>spring-security-adfs-saml2</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <name>Spring Security ADFS SAML2</name>
@@ -45,17 +45,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jdk.version>1.8</jdk.version>
 
-        <spring-security-saml2.version>1.0.3.RELEASE</spring-security-saml2.version>
-        <spring.version>5.0.7.RELEASE</spring.version>
-        <spring-security.version>5.0.6.RELEASE</spring-security.version>
-        <opensaml.version>2.6.4</opensaml.version>
-        <javaee-api.version>7.0</javaee-api.version>
-        <pojobuilder.version>3.4.0</pojobuilder.version>
         <better-preconditions.version>0.1.1</better-preconditions.version>
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <spock-core.version>1.1-groovy-2.4-rc-3</spock-core.version>
-        <cglib-nodep.version>3.2.4</cglib-nodep.version>
-        <objenesis.version>2.5.1</objenesis.version>
+        <opensaml.version>2.6.4</opensaml.version>
+        <javaee-api.version>8.0</javaee-api.version>
+        <pojobuilder.version>4.2.2</pojobuilder.version>
+        <objenesis.version>3.0.1</objenesis.version>
+        <spring-security-saml2.version>1.0.3.RELEASE</spring-security-saml2.version>
     </properties>
 
     <dependencyManagement>
@@ -82,21 +77,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
                 <version>${opensaml.version}</version>
@@ -105,26 +85,6 @@
                 <groupId>com.github.choonchernlim</groupId>
                 <artifactId>better-preconditions</artifactId>
                 <version>${better-preconditions.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax.servlet-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.spockframework</groupId>
-                <artifactId>spock-core</artifactId>
-                <version>${spock-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib-nodep</artifactId>
-                <version>${cglib-nodep.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
@@ -174,7 +134,7 @@
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
+            <artifactId>spock-spring</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -191,29 +151,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <compilerId>groovy-eclipse-compiler</compilerId>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>2.9.2-01</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>2.4.3-01</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
             <!--
             When using `mkarneim/pojobuilder` (https://github.com/mkarneim/pojobuilder), the builder source files
             are generated at `target/generated-sources/annotations`. If these source files exist and `mvn compile`
@@ -224,7 +161,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -241,6 +177,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
