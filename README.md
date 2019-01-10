@@ -35,9 +35,9 @@ Tested against IdP's environments:-
 * Java 8.
 * Both Sp and IdP must use HTTPS protocol.
 * Java’s default keysize is limited to 128-bit key due to US export laws and a few countries’ import laws. So, Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files must be installed to allow larger key size, such as 256-bit key.
-* Keystore must contain both Sp's public/private keys and imported IdP's public certificate. 
-    * Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
-    * IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack.
+* Keystore contains the following:- 
+    * (REQUIRED) Sp's public/private keys - to generate digital signature before sending SAML messages to IdP.
+    * (OPTIONAL) IdP's public certificate - to verify IdP's SAML messages to prevent man-in-the-middle attack. If not provided, they must be stored under JDK's cacerts.
 * To generate Sp's public/private keys:-
 
 ```
